@@ -1,35 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      {% block title %}
-        Django App
-      {% endblock %}
-    </title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"  rel="stylesheet" />
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">My Django App</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contact</a>
-          </li>
-        </ul>
+  <style>
+    .dashboard-container {
+      background: #fff;
+      overflow: hidden;
+    }
+    
+    .layout-wrapper {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .sidebar {
+      width: 17%;
+      background: #fff;
+      padding: 24px 0 103px;
+      color: #202224;
+    }
+    
+    .logo {
+      color: #4880ff;
+      text-align: center;
+      font: 800 20px Nunito Sans, sans-serif;
+    }
+    
+    .nav-item {
+      display: flex;
+      gap: 16px;
+      padding: 13px 40px;
+    }
+    
+    .nav-item-active {
+      background: #4880ff;
+      color: #fff;
+    }
+    
+    .nav-icon {
+      text-align: center;
+      font: 500 22px LineAwesome, sans-serif;
+    }
+    
+    .nav-text {
+      letter-spacing: 0.3px;
+      font: 600 14px Nunito Sans, sans-serif;
+    }
+    
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #eee;
+      margin: 16px 0;
+    }
+    
+    .section-title {
+      letter-spacing: 0.26px;
+      margin: 16px 0 0 40px;
+      font: 700 12px Nunito Sans, sans-serif;
+    }
+    
+    .main-content {
+      width: 83%;
+      background: #f5f6fa;
+      padding: 0 1px;
+    }
+    
+    .top-bar {
+      background: #fff;
+      padding: 13px 31px;
+      display: flex;
+      justify-content: right;
+      align-items: center;
+    }
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 23px;
+    }
+    
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+    }
+    
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .user-name {
+      color: #404040;
+      font: 700 14px Nunito Sans, sans-serif;
+    }
+    
+    .user-role {
+      color: #565656;
+      font: 600 12px Nunito Sans, sans-serif;
+    }
+    
+    .dropdown-icon {
+      width: 18px;
+      height: 18px;
+    }
+    
+    .page-title {
+      color: #202224;
+      letter-spacing: -0.11px;
+      font: 700 32px Nunito Sans, sans-serif;
+      margin: 27px 0;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 62px;
+    }
+    
+    .stat-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      height: 200px;
+    }
+    
+    .date-picker {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: #fcfdfd;
+      border: 1px solid #d5d5d5;
+      border-radius: 4px;
+      padding: 9px 18px;
+      font: 600 12px Nunito Sans, sans-serif;
+      color: rgba(43, 48, 52, 0.4);
+    }
+    
+    .events-section {
+      margin-top: 40px;
+    }
+    
+    .events-title {
+      color: #202224;
+      font: 700 24px Nunito Sans, sans-serif;
+    }
+    
+    .events-container {
+      background: #fff;
+      border-radius: 8px;
+      margin-top: 20px;
+      height: 636px;
+    }
+    
+    @media (max-width: 991px) {
+      .layout-wrapper {
+        flex-direction: column;
+      }
+      
+      .sidebar,
+      .main-content {
+        width: 100%;
+      }
+      
+      .top-bar {
+        padding: 13px 20px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .section-title {
+        margin-left: 10px;
+      }
+      
+      .nav-item {
+        padding: 13px 20px;
+      }
+    }
+    </style>
+    
+    <div class="dashboard-container">
+      <div class="layout-wrapper">
+        <nav class="sidebar">
+          <h1 class="logo">Academy of Legends</h1>
+          
+          <a href="#" class="nav-item nav-item-active">
+            <span class="nav-icon" aria-hidden="true"></span>
+            <span class="nav-text">Dashboard</span>
+          </a>
+    
+          <div class="divider"></div>
+          
+          <h2 class="section-title">PAGES</h2>
+          
+          <a href="#" class="nav-item">
+            <span class="nav-icon" aria-hidden="true"></span>
+            <span class="nav-text">Settings</span>
+          </a>
+          
+          <a href="#" class="nav-item">
+            <span class="nav-icon" aria-hidden="true"></span>
+            <span class="nav-text">Logout</span>
+          </a>
+        </nav>
+    
+        <main class="main-content">
+          <header class="top-bar">
+            <div class="user-profile">
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff91569b03a1f3ea05d264f6177a7ab0e8c181fb9d7738db11cfba2674e7bce0?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b" alt="Profile photo of Moni Roy" class="user-avatar">
+              <div class="user-info">
+                <span class="user-name">Moni Roy</span>
+                <span class="user-role">Admin</span>
+              </div>
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/625982aaef443be514e593110a93b4aff54e04cb38162e48faefa1086a49abca?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b" alt="" class="dropdown-icon">
+            </div>
+          </header>
+    
+          <div class="page-content">
+            <h1 class="page-title">Dashboard</h1>
+    
+            <section class="stats-grid">
+              <div class="stat-card"></div>
+              <div class="stat-card"></div>
+              <div class="stat-card"></div>
+              <div class="stat-card"></div>
+            </section>
+    
+            <div class="date-picker">
+              <span>October</span>
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/111fd0868388956f825ac25ee037644d295049379b5acf6e86ea84aed5304cc0?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b" alt="" aria-hidden="true">
+            </div>
+    
+            <section class="events-section">
+              <h2 class="events-title">Events Details</h2>
+              <div class="events-container"></div>
+            </section>
+          </div>
+        </main>
       </div>
-    </nav>
-    <div class="container">{% block content %} {% endblock %}</div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" ></script>
-  </body>
+    </div>
 </html>
