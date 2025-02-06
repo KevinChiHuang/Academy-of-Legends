@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from .models import User
 from .forms import RegisterForm, LoginForm
 from django.contrib import messages
 from pymongo import MongoClient
