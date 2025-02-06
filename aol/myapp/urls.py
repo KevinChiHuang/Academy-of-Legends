@@ -8,3 +8,4 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('admin/', views.admin, name='admin'),
 ]
+

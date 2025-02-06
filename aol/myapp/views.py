@@ -101,3 +101,4 @@ def logout(request):
     request.session.flush()
     messages.success(request, 'You have logged out successfully!')
     return redirect('login')  
+
