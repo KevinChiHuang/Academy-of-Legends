@@ -1,8 +1,7 @@
 <!-- myapp/templates/accounts/register.html -->
 <form method="POST">
     {% csrf_token %}
-    {{ form.as_p }}  <!-- This will render all the form fields, including confirm_password -->
-    
+    {{ form.as_p }}  
     <button type="submit">Register</button>
 </form>
 
