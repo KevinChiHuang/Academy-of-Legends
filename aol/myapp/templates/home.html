@@ -197,9 +197,21 @@
           
           <a href="#" class="nav-item">
             <span class="nav-icon" aria-hidden="true"></span>
-            <span class="nav-text">Settings</span>
+            <span class="nav-text">Reward Shop</span>
           </a>
-          
+
+          <a href="#" class="nav-item">
+            <span class="nav-icon" aria-hidden="true"></span>
+            <span class="nav-text">Legends Board</span>
+          </a>
+
+          {% if is_admin %}
+          <a href="{% url 'admin' %}" class="nav-item">
+              <span class="nav-icon" aria-hidden="true"></span>
+              <span>Edit Students</span>
+          </a>
+          {% endif %}
+              
           <a href="#" class="nav-item">
             <span class="nav-icon" aria-hidden="true"></span>
             <a href="{% url 'logout' %}">Logout</a>
