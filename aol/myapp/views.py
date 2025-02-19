@@ -102,3 +102,75 @@ def logout(request):
     messages.success(request, 'You have logged out successfully!')
     return redirect('login')  
 
+def shop(request):
+    if 'user_id' not in request.session:
+        return redirect('login') 
+
+    # Fetch the user's details from the database
+    user_id = request.session['user_id']  
+    user = users_collection.find_one({'_id': ObjectId(user_id)})  
+
+    if not user:
+        messages.error(request, "User not found. Please log in again.")
+        return redirect('login')
+
+    # Pass the username to the template
+    return render(request, 'shop.html', {
+        'username': user['username'],
+        'is_admin': user.get('is_admin', False) 
+    })
+
+
+def board(request):
+    if 'user_id' not in request.session:
+        return redirect('login') 
+
+    # Fetch the user's details from the database
+    user_id = request.session['user_id']  
+    user = users_collection.find_one({'_id': ObjectId(user_id)})  
+
+    if not user:
+        messages.error(request, "User not found. Please log in again.")
+        return redirect('login')
+
+    # Pass the username to the template
+    return render(request, 'board.html', {
+        'username': user['username'],
+        'is_admin': user.get('is_admin', False) 
+    })
+
+def add(request):
+    if 'user_id' not in request.session:
+        return redirect('login') 
+
+    # Fetch the user's details from the database
+    user_id = request.session['user_id']  
+    user = users_collection.find_one({'_id': ObjectId(user_id)})  
+
+    if not user:
+        messages.error(request, "User not found. Please log in again.")
+        return redirect('login')
+
+    # Pass the username to the template
+    return render(request, 'add.html', {
+        'username': user['username'],
+        'is_admin': user.get('is_admin', False) 
+    })
+
+def settings(request):
+    # if 'user_id' not in request.session:
+    #     return redirect('login') 
+
+    # # Fetch the user's details from the database
+    # user_id = request.session['user_id']  
+    # user = users_collection.find_one({'_id': ObjectId(user_id)})  
+
+    # if not user:
+    #     messages.error(request, "User not found. Please log in again.")
+    #     return redirect('login')
+
+    # Pass the username to the template
+    return render(request, 'settings.html', {
+        # 'username': user['username'],
+        # 'is_admin': user.get('is_admin', False) 
+    })
