@@ -1,8 +1,7 @@
-{% comment %} <!-- myapp/templates/login.html -->
+<!-- myapp/templates/login.html -->
 <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-
     <button type="submit">Login</button>
 </form>
 
@@ -13,9 +12,9 @@
 <!-- Register button -->
 <a href="{% url 'register' %}">
     <button type="button">Register</button>
-</a> {% endcomment %}
+</a> 
 
-<style>
+{% comment %} <style>
     :root {
         --primary-color: #4EA685;
         --secondary-color: #57B894;
@@ -386,9 +385,11 @@
                         <i class='bx bxs-lock-alt'></i>
                         <input type="password" placeholder="Confirm password">
                     </div>
-                    <button>
-                        Sign up
-                    </button>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}  
+                        <button type="submit">Register</button>
+                    </form>
                     <p>
                         <span>
                             Already have an account?
@@ -414,9 +415,11 @@
                         <i class='bx bxs-lock-alt'></i>
                         <input type="password" placeholder="Password">
                     </div>
-                    <button>
-                        Sign in
-                    </button>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit">Login</button>
+                    </form>
                     <p>
                         <b>
                             Forgot password?
@@ -482,4 +485,4 @@ toggle = () => {
 setTimeout(() => {
 	container.classList.add('sign-in')
 }, 200)
-</script>
+</script> {% endcomment %}

@@ -24,6 +24,9 @@ def register(request):
                 'username': username,
                 'password': password, 
                 'is_admin': False,
+                'gold': 0,
+                'exp': 0,
+                'hp': 0
             }
             result = users_collection.insert_one(user_data)  
             user_id = result.inserted_id  
@@ -74,27 +77,29 @@ def home(request):
     # Pass the username to the template
     return render(request, 'home.html', {
         'username': user['username'],
+        'exp': user['exp'],
+        'gold': user['gold'],
+        'hp': user['hp'],
         'is_admin': user.get('is_admin', False) 
     })
 
 def admin(request):
     if 'user_id' not in request.session:
-        return redirect('login')  # Redirect to login if not logged in
+        return redirect('login')
 
-    # Fetch user details from the database
     user_id = request.session['user_id']
     user = users_collection.find_one({'_id': ObjectId(user_id)})
 
     if not user:
         messages.error(request, "User not found. Please log in again.")
-        return redirect('login')  # Redirect to login if user not found
+        return redirect('login')
 
-    # Check if the user is an admin
     if user.get('is_admin', False):
-        return render(request, 'admin.html', {'username': user['username']})  # Render the admin page
+        students = list(users_collection.find({}, {"password": 0}))  # Exclude passwords
+        return render(request, 'admin.html', {'username': user['username'], 'students': students})
     else:
         messages.error(request, "You do not have permission to access this page.")
-        return redirect('home')  # Redirect to home if not an admin 
+        return redirect('home')
 
 def logout(request):
     # Clear the session to log out the user
@@ -125,7 +130,7 @@ def board(request):
     if 'user_id' not in request.session:
         return redirect('login') 
 
-    # Fetch the user's details from the database
+    # Fetch the current user's details
     user_id = request.session['user_id']  
     user = users_collection.find_one({'_id': ObjectId(user_id)})  
 
@@ -133,10 +138,15 @@ def board(request):
         messages.error(request, "User not found. Please log in again.")
         return redirect('login')
 
-    # Pass the username to the template
+    # Fetch all students, excluding passwords, sorted by exp in descending order
+    students = list(
+        users_collection.find({}, {"password": 0}).sort("exp", -1)
+    )
+    
     return render(request, 'board.html', {
         'username': user['username'],
-        'is_admin': user.get('is_admin', False) 
+        'is_admin': user.get('is_admin', False),
+        'students': students,
     })
 
 def add(request):
@@ -174,3 +184,34 @@ def settings(request):
         # 'username': user['username'],
         # 'is_admin': user.get('is_admin', False) 
     })
+
+
+def student_list(request):
+    students = list(users_collection.find({}, {"password": 0}))  # Exclude passwords for security
+    return render(request, 'admin.html','board.html', {'students': students})
+    
+
+def update_student(request):
+    """Handles updating gold and hearts."""
+    if request.method == "POST":
+        user_id = request.POST.get("user_id")
+        field = request.POST.get("field")  # 'gold' or 'hp'
+        action = request.POST.get("action")  # 'add' or 'minus'
+
+        user = users_collection.find_one({"_id": ObjectId(user_id)})
+
+        if user:
+            new_value = user[field] + 1 if action == "add" else max(0, user[field] - 1)
+            users_collection.update_one({"_id": ObjectId(user_id)}, {"$set": {field: new_value}})
+            return JsonResponse({"success": True, field: new_value})
+
+    return JsonResponse({"success": False})
+
+def delete_student(request):
+    """Handles deleting a user."""
+    if request.method == "POST":
+        user_id = request.POST.get("user_id")
+        users_collection.delete_one({"_id": ObjectId(user_id)})
+        return JsonResponse({"success": True})
+
+    return JsonResponse({"success": False})
