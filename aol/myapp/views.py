@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse
 from .forms import RegisterForm, LoginForm
 from django.contrib import messages
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import gridfs
 
 client = MongoClient('mongodb+srv://User:snoopy123@aol.5fchw.mongodb.net/?retryWrites=true&w=majority')
 db = client['Capstone']
 users_collection = db['users']
+rewards_collection = db['rewards']
+fs = gridfs.GridFS(db) 
 
 def register(request):
     if request.method == 'POST':
@@ -118,11 +122,14 @@ def shop(request):
     if not user:
         messages.error(request, "User not found. Please log in again.")
         return redirect('login')
+    
+    rewards = list(db.rewards.find({}))     
 
     # Pass the username to the template
     return render(request, 'shop.html', {
         'username': user['username'],
-        'is_admin': user.get('is_admin', False) 
+        'is_admin': user.get('is_admin', False),
+        'rewards': rewards,
     })
 
 
@@ -150,22 +157,30 @@ def board(request):
     })
 
 def add(request):
-    if 'user_id' not in request.session:
-        return redirect('login') 
+    if request.method == "POST":
+        item_name = request.POST.get("item")
+        gold = request.POST.get("gold")
+        description = request.POST.get("description")
+        image_file = request.FILES.get("upload")  # Get uploaded image
 
-    # Fetch the user's details from the database
-    user_id = request.session['user_id']  
-    user = users_collection.find_one({'_id': ObjectId(user_id)})  
+        # Store image in GridFS
+        image_id = None
+        if image_file:
+            image_id = fs.put(image_file.read(), filename=image_file.name, content_type=image_file.content_type)
 
-    if not user:
-        messages.error(request, "User not found. Please log in again.")
-        return redirect('login')
+        # Save reward to MongoDB
+        reward = {
+            "item": item_name,
+            "gold": gold,
+            "description": description,
+            "image_id": str(image_id) if image_id else None  # Store image ID as string
+        }
+        db.rewards.insert_one(reward)
 
-    # Pass the username to the template
-    return render(request, 'add.html', {
-        'username': user['username'],
-        'is_admin': user.get('is_admin', False) 
-    })
+        return redirect("shop")  # Redirect to shop page
+
+    return render(request, "add.html")
+
 
 def settings(request):
     # if 'user_id' not in request.session:
@@ -215,3 +230,21 @@ def delete_student(request):
         return JsonResponse({"success": True})
 
     return JsonResponse({"success": False})
+
+def upload_image(request):
+    if request.method == "POST" and request.FILES.get("image"):
+        image_file = request.FILES["image"]
+
+        # Store the file in GridFS
+        file_id = fs.put(image_file.read(), filename=image_file.name, content_type=image_file.content_type)
+
+        return JsonResponse({"message": "File uploaded successfully", "file_id": str(file_id)})
+
+    return JsonResponse({"error": "No file uploaded"}, status=400)
+
+def get_image(request, image_id):
+    try:
+        file = fs.get(ObjectId(image_id))
+        return HttpResponse(file.read(), content_type=file.content_type)
+    except gridfs.errors.NoFile:
+        return HttpResponse("File not found", status=404)
