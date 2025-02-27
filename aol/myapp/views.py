@@ -100,7 +100,7 @@ def admin(request):
 
     if user.get('is_admin', False):
         students = list(users_collection.find({}, {"password": 0}))  # Exclude passwords
-        return render(request, 'admin.html', {'username': user['username'], 'students': students})
+        return render(request, 'admin.html', {'username': user['username'], 'students': students, 'is_admin': user.get('is_admin', False),})
     else:
         messages.error(request, "You do not have permission to access this page.")
         return redirect('home')

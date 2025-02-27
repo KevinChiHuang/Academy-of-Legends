@@ -88,6 +88,12 @@
           <span class="nav-text">Edit Students</span>
         </a>
         {% endif %}
+        {% if is_admin %}
+        <a href="http://127.0.0.1:8000/add/" class="nav-item nav-item-active">
+          <span class="nav-icon" aria-hidden="true"></span>
+          <span class="nav-text">Add rewards</span>
+        </a>
+        {% endif %}
         <div class="divider"></div>
         <a href="http://127.0.0.1:8000/todos/" class="nav-item">
           <span class="nav-text-Settings">Settings</span>
