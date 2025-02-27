@@ -20,8 +20,6 @@
         -ms-flex-align: start;
         align-items: flex-start;
         -ms-flex-wrap: wrap;
-        
-      
         padding: 50px 0;
       }
       .ag-courses_item {
@@ -112,8 +110,6 @@
       .ag-courses_item:nth-child(6n) .ag-courses-item_bg {
         background-color: #4c49ea;
       }
-      
-      
       
       @media only screen and (max-width: 979px) {
         .ag-courses_item {
@@ -361,19 +357,18 @@
           <a href="{% url 'logout' %}" class="nav-item">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text-settings">Logout</span>
-        </a>
+          </a>
         
         </nav>
     
         <main class="main-content">
           <header class="top-bar">
             <div class="user-profile">
-              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff91569b03a1f3ea05d264f6177a7ab0e8c181fb9d7738db11cfba2674e7bce0?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b" alt="Profile photo of Moni Roy" class="user-avatar">
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff91569b03a1f3ea05d264f6177a7ab0e8c181fb9d7738db11cfba2674e7bce0?placeholderIfAbsent=true" alt="Profile Photo" class="user-avatar">
               <div class="user-info">
-                <span class="user-name">Moni Roy</span>
-                <span class="user-role">Admin</span>
+                <span class="user-name">{{ username }}</span>
               </div>
-              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/625982aaef443be514e593110a93b4aff54e04cb38162e48faefa1086a49abca?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b" alt="" class="dropdown-icon">
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/625982aaef443be514e593110a93b4aff54e04cb38162e48faefa1086a49abca?placeholderIfAbsent=true" alt="" class="dropdown-icon">
             </div>
           </header>
     
@@ -451,16 +446,33 @@
 
 
             </section>
-{% comment %}     
+            {% comment %}     
             <div class="date-picker">
               <span>October</span>
               <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/111fd0868388956f825ac25ee037644d295049379b5acf6e86ea84aed5304cc0?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b" alt="" aria-hidden="true">
             </div>
-     {% endcomment %}
+            {% endcomment %}
             <section class="events-section">
+              <h2 class="events-title">Your Inventory</h2>
+              <div class="events-container">
+                {% for item in inventory %}
+                  <div class="inventory-item">
+                    <h3>{{ item.item }}</h3>
+                    <button type="submit">Use</button> <button type="submit">Refund</button>
+                    {% if item.image_id %}
+                      <img src="{% url 'get_image' item.image_id %}" alt="{{ item.item }}" width="100">
+                    {% else %}
+                      <p>No image available</p>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </section>
+
+          <section class="events-section">
               <h2 class="events-title">Events</h2>
               <div class="events-container"></div>
-            </section>
+          </section>
           </div>
         </main>
       </div>

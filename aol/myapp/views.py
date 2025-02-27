@@ -66,25 +66,24 @@ def login(request):
 
     return render(request, 'accounts/login.html', {'form': form})
 
+
 def home(request):
     if 'user_id' not in request.session:
-        return redirect('login') 
+        return redirect('login')
 
-    # Fetch the user's details from the database
-    user_id = request.session['user_id']  
-    user = users_collection.find_one({'_id': ObjectId(user_id)})  
+    user_id = request.session['user_id']
+    user = users_collection.find_one({'_id': ObjectId(user_id)})
 
     if not user:
         messages.error(request, "User not found. Please log in again.")
         return redirect('login')
 
-    # Pass the username to the template
+    inventory = user.get('inventory', [])  # Get inventory, default to empty list
+
     return render(request, 'home.html', {
         'username': user['username'],
-        'exp': user['exp'],
-        'gold': user['gold'],
-        'hp': user['hp'],
-        'is_admin': user.get('is_admin', False) 
+        'gold': user.get('gold', 0),
+        'inventory': inventory
     })
 
 def admin(request):
@@ -122,15 +121,19 @@ def shop(request):
     if not user:
         messages.error(request, "User not found. Please log in again.")
         return redirect('login')
-    
-    rewards = list(db.rewards.find({}))     
 
-    # Pass the username to the template
+    # Fetch rewards and assign _id to id
+    rewards = list(rewards_collection.find({}))
+    for reward in rewards:
+        reward['id'] = str(reward['_id'])  # Convert ObjectId to string and assign to 'id'
+
+    # Pass rewards to the template
     return render(request, 'shop.html', {
         'username': user['username'],
         'is_admin': user.get('is_admin', False),
         'rewards': rewards,
     })
+
 
 
 def board(request):
@@ -248,3 +251,47 @@ def get_image(request, image_id):
         return HttpResponse(file.read(), content_type=file.content_type)
     except gridfs.errors.NoFile:
         return HttpResponse("File not found", status=404)
+
+def buy_reward(request, reward_id):
+    if 'user_id' not in request.session:
+        return redirect('login')  
+
+    user_id = request.session['user_id']
+    user = users_collection.find_one({'_id': ObjectId(user_id)})
+
+    if not user:
+        messages.error(request, "User not found. Please log in again.")
+        return redirect('login')
+
+    # Fetch reward from MongoDB
+    reward = rewards_collection.find_one({'_id': ObjectId(reward_id)})
+
+    if not reward:
+        messages.error(request, "Reward not found.")
+        return redirect('shop')
+
+    user_gold = int(user['gold'])  
+    reward_price = int(reward['gold'])  
+
+    # Check if user has enough gold
+    if user_gold < reward_price:
+        messages.error(request, "Not enough gold!")
+        return redirect('shop')
+
+    # Deduct gold
+    new_gold = user_gold - reward_price
+    users_collection.update_one({'_id': ObjectId(user_id)}, {'$set': {'gold': new_gold}})
+    print(user.get('inventory', []))
+    # Add reward to user's inventory
+    users_collection.update_one(
+    {'_id': ObjectId(user_id)},
+    {'$push': {'inventory': {
+        'item': reward['item'],
+        'description': reward.get('description', ''),
+        'image_id': str(reward['_id']) if reward.get('image_id') else None  # Ensure image_id is used
+        }}}
+    )
+
+
+    messages.success(request, f"You have successfully purchased {reward['item']}!")
+    return redirect('home')

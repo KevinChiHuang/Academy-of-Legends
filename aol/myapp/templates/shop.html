@@ -266,10 +266,12 @@
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Shop</span>
         </a>
+        {% if is_admin %}
         <a href="http://127.0.0.1:8000/admin/" class="nav-item nav-item-active">
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Edit Students</span>
         </a>
+        {% endif %}
 
         <div class="divider"></div>
 
@@ -278,28 +280,20 @@
           <span class="nav-text-Settings">Settings</span>
         </a>
 
-        <a href="#" class="nav-item">
+        <a href="{% url 'logout' %}" class="nav-item">
           <span class="nav-icon" aria-hidden="true"></span>
-          <span class="nav-text-Settings">Logout</span>
+          <span class="nav-text-settings">Logout</span>
         </a>
       </nav>
 
       <main class="main-content">
         <header class="top-bar">
           <div class="user-profile">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff91569b03a1f3ea05d264f6177a7ab0e8c181fb9d7738db11cfba2674e7bce0?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b"
-              alt="Profile photo of Moni Roy"
-              class="user-avatar"
-            />
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff91569b03a1f3ea05d264f6177a7ab0e8c181fb9d7738db11cfba2674e7bce0?placeholderIfAbsent=true" alt="Profile Photo" class="user-avatar">
             <div class="user-info">
-              <span class="user-role">Admin</span>
+              <span class="user-name">{{ username }}</span>
             </div>
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/625982aaef443be514e593110a93b4aff54e04cb38162e48faefa1086a49abca?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b"
-              alt=""
-              class="dropdown-icon"
-            />
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/625982aaef443be514e593110a93b4aff54e04cb38162e48faefa1086a49abca?placeholderIfAbsent=true" alt="" class="dropdown-icon">
           </div>
         </header>
         <div class="page-content">
@@ -321,7 +315,13 @@
 
                 <p>{{ reward.gold }} Gold</p>
                 <p>{{ reward.description }}</p>
-                <button>Buy</button>
+                
+
+                <form action="{% url 'buy_reward' reward.id %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit">Buy</button>
+                </form>
+    
               </div>
               {% endfor %}
             </div>

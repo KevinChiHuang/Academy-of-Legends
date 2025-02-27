@@ -15,6 +15,7 @@ urlpatterns = [
     path('update_student/', views.update_student, name='update_student'),  # Fix: Use views.update_student
     path('delete_student/', views.delete_student, name='delete_student'),  # Fix: Use views.delete_student
     path('upload/', views.upload_image, name='upload_image'),
-    path("get_image/<str:image_id>/", views.get_image, name="get_image"), 
+    path("get_image/<str:image_id>/", views.get_image, name="get_image"),
+    path('buy/<str:reward_id>/', views.buy_reward, name='buy_reward'),
 ]
 
