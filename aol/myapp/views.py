@@ -82,6 +82,7 @@ def home(request):
 
     return render(request, 'home.html', {
         'username': user['username'],
+        'is_admin': user.get('is_admin', False),
         'gold': user.get('gold', 0),
         'inventory': inventory
     })
