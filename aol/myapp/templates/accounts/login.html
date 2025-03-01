@@ -1,20 +1,4 @@
-<!-- myapp/templates/login.html -->
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
-
-{% if error %}
-    <p style="color:red;">{{ error }}</p>
-{% endif %}
-
-<!-- Register button -->
-<a href="{% url 'register' %}">
-    <button type="button">Register</button>
-</a> 
-
-{% comment %} <style>
+<style>
     :root {
         --primary-color: #4EA685;
         --secondary-color: #57B894;
@@ -369,25 +353,24 @@
         <div class="col align-items-center flex-col sign-up">
             <div class="form-wrapper align-items-center">
                 <div class="form sign-up">
-                    <div class="input-group">
-                        <i class='bx bxs-user'></i>
-                        <input type="text" placeholder="Username">
-                    </div>
-                    <div class="input-group">
-                        <i class='bx bx-mail-send'></i>
-                        <input type="email" placeholder="Email">
-                    </div>
-                    <div class="input-group">
-                        <i class='bx bxs-lock-alt'></i>
-                        <input type="password" placeholder="Password">
-                    </div>
-                    <div class="input-group">
-                        <i class='bx bxs-lock-alt'></i>
-                        <input type="password" placeholder="Confirm password">
-                    </div>
-                    <form method="POST">
-                        {% csrf_token %}
-                        {{ form.as_p }}  
+                    <form method="POST" action="{% url 'register' %}">
+                        {% csrf_token %} 
+                        <div class="input-group">
+                            <i class='bx bxs-user'></i>
+                            <input type="text" name="username" placeholder="Username" required>
+                        </div>
+                        <!-- <div class="input-group">
+                            <i class='bx bx-mail-send'></i>
+                            <input type="email" name="email" placeholder="Email" requried>
+                        </div> -->
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" name="password" placeholder="Password" required>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" name="confirm_password" placeholder="Confirm password" required>
+                        </div>
                         <button type="submit">Register</button>
                     </form>
                     <p>
@@ -407,19 +390,19 @@
         <div class="col align-items-center flex-col sign-in">
             <div class="form-wrapper align-items-center">
                 <div class="form sign-in">
-                    <div class="input-group">
-                        <i class='bx bxs-user'></i>
-                        <input type="text" placeholder="Username">
-                    </div>
-                    <div class="input-group">
-                        <i class='bx bxs-lock-alt'></i>
-                        <input type="password" placeholder="Password">
-                    </div>
-                    <form method="POST">
+                    <form method="POST" action="{% url 'login' %}">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        <div class="input-group">
+                            <i class='bx bxs-user'></i>
+                            <input type="text" name="username" placeholder="Username" required>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" name="password" placeholder="Password" required>
+                        </div>
                         <button type="submit">Login</button>
                     </form>
+                    
                     <p>
                         <b>
                             Forgot password?
@@ -448,13 +431,13 @@
         <div class="col align-items-center flex-col">
             <div class="text sign-in">
                 <h2>
-                    Welcome
+                    Academy of Legends
                 </h2>
 
             </div>
-            <div class="img sign-in">
+            <!-- <div class="img sign-in">
     
-            </div>
+            </div> -->
         </div>
         <!-- END SIGN IN CONTENT -->
         <!-- SIGN UP CONTENT -->
@@ -485,4 +468,4 @@ toggle = () => {
 setTimeout(() => {
 	container.classList.add('sign-in')
 }, 200)
-</script> {% endcomment %}
+</script>

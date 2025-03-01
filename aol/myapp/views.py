@@ -12,36 +12,77 @@ users_collection = db['users']
 rewards_collection = db['rewards']
 fs = gridfs.GridFS(db) 
 
+# def register(request):
+#     if request.method == 'POST':
+#         form = RegisterForm(request.POST)
+#         if form.is_valid():
+#             username = form.cleaned_data['username']
+#             password = form.cleaned_data['password']
+#             confirm_password = form.cleaned_data["confirm_password"]
+
+#             if password != confirm_password:
+#                 messages.error(request, "Passwords do not match.")
+#                 return redirect("register")    
+
+#             # Check if username already exists
+#             if users_collection.find_one({'username': username}):
+#                 return render(request, 'accounts/register.html', {'form': form, 'error': 'Username already exists.'})
+
+#             # Create a new user document and insert it into the database
+#             user_data = {
+#                 'username': username,
+#                 'password': password, 
+#                 'is_admin': False,
+#                 'gold': 0,
+#                 'exp': 0,
+#                 'hp': 0
+#             }
+#             result = users_collection.insert_one(user_data)  
+#             user_id = result.inserted_id  
+
+#             request.session['user_id'] = str(user_id)
+
+#             return redirect('login')
+#     else:
+#         form = RegisterForm()
+
+#     return render(request, 'accounts/register.html', {'form': form})
+
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
+            confirm_password = form.cleaned_data["confirm_password"]
+
+            if password != confirm_password:
+                messages.error(request, "Passwords do not match.")
+                return redirect("login")  # Redirect to login page
 
             # Check if username already exists
             if users_collection.find_one({'username': username}):
-                return render(request, 'accounts/register.html', {'form': form, 'error': 'Username already exists.'})
+                return render(request, 'accounts/login.html', {'form': form, 'error': 'Username already exists.'})
 
-            # Create a new user document and insert it into the database
             user_data = {
                 'username': username,
-                'password': password, 
+                'password': password,  
                 'is_admin': False,
                 'gold': 0,
                 'exp': 0,
                 'hp': 0
             }
-            result = users_collection.insert_one(user_data)  
-            user_id = result.inserted_id  
+            result = users_collection.insert_one(user_data)
+            user_id = result.inserted_id
 
             request.session['user_id'] = str(user_id)
+            messages.success(request, "Registration successful! You can now log in.")
 
-            return redirect('login')
+            return redirect('login')  # Redirect to login page
     else:
         form = RegisterForm()
 
-    return render(request, 'accounts/register.html', {'form': form})
+    return render(request, 'accounts/login.html', {'form': form})
 
 
 def login(request):

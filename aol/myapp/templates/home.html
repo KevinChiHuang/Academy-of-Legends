@@ -32,10 +32,30 @@
       
         border-radius: 28px;
       }
+
+      .ag-courses_item1 {
+        -ms-flex-preferred-size: calc(15% - 30px);
+        flex-basis: calc(15% - 30px);
+      
+        margin: 0 30px 30px;
+      
+        overflow: hidden;
+      
+        border-radius: 28px;
+      }
       .ag-courses-item_link {
         display: block;
         padding: 30px 20px;
         background-color: #4880ff;
+      
+        overflow: hidden;
+      
+        position: relative;
+      }
+      .ag-courses-item_link1 {
+        display: block;
+        padding: 30px 20px;
+        background-color: #8548ff;
       
         overflow: hidden;
       
@@ -79,6 +99,8 @@
         -o-transition: color .5s ease;
         transition: color .5s ease
       }
+
+
       .ag-courses-item_bg {
         height: 128px;
         width: 128px;
@@ -110,7 +132,10 @@
       .ag-courses_item:nth-child(6n) .ag-courses-item_bg {
         background-color: #4c49ea;
       }
-      
+      .d-flex.mt-2 button {
+        margin-right: 10px; /* Adjust spacing */
+      }
+
       @media only screen and (max-width: 979px) {
         .ag-courses_item {
           -ms-flex-preferred-size: calc(50% - 30px);
@@ -459,22 +484,46 @@
               <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/111fd0868388956f825ac25ee037644d295049379b5acf6e86ea84aed5304cc0?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b" alt="" aria-hidden="true">
             </div>
             {% endcomment %}
-            <section class="events-section">
+            <!-- <section class="events-section">
               <h2 class="events-title">Your Inventory</h2>
               <div class="events-container">
                 {% for item in inventory %}
                   <div class="inventory-item">
                     <h3>{{ item.item }}</h3>
                     <button type="submit">Use</button> <button type="submit">Refund</button>
-                    {% if item.image_id %}
+                    <!-- {% if item.image_id %}
                       <img src="{% url 'get_image' item.image_id %}" alt="{{ item.item }}" width="100">
                     {% else %}
                       <p>No image available</p>
-                    {% endif %}
-                  </div>
+                    {% endif %} -->
+                  <!-- </div>
                 {% endfor %}
               </div>
+            </section> -->
+            <section class="events-section">
+              <h2 class="events-title">Your Inventory</h2>
+              <div class="ag-format-container">
+                <div class="ag-courses_box">
+            
+                  {% for item in inventory %}
+                    <div class="ag-courses_item1">
+                      <div class="ag-courses-item_link1">
+                        <div class="ag-courses-item_title">{{ item.item }}</div>
+            
+                        <div class="d-flex mt-2">
+                          <button class="btn btn-success btn-sm me-1" type="submit">Use</button>
+                          <p> </p>
+                          <button class="btn btn-danger btn-sm" type="submit">Refund</button>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+            
+                </div>
+              </div>
             </section>
+            
+            
 
           <section class="events-section">
               <h2 class="events-title">Events</h2>
