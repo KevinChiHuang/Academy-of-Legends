@@ -351,27 +351,27 @@
         <nav class="sidebar">
           <h1 class="logo">Academy of Legends</h1>
           
-          <a href="http://127.0.0.1:8000/home/" class="nav-item nav-item-active">
+          <a href="{% url 'home' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Dashboard</span>
           </a>
-          <a href="http://127.0.0.1:8000/board/#" class="nav-item nav-item-active">
+          <a href="{% url 'board' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Legends Board</span>
           </a>
-          <a href="http://127.0.0.1:8000/shop/" class="nav-item nav-item-active">
+          <a href="{% url 'shop' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Shop</span>
           </a>
 
           {% if is_admin %}
-          <a href="http://127.0.0.1:8000/admin/" class="nav-item nav-item-active">
+          <a href="{% url 'admin' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Edit Students</span>
           </a>
           {% endif %}
           {% if is_admin %}
-          <a href="http://127.0.0.1:8000/add/" class="nav-item nav-item-active">
+          <a href="{% url 'add' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Add rewards</span>
           </a>
@@ -381,7 +381,7 @@
           
           
           
-          <a href="http://127.0.0.1:8000/todos/" class="nav-item">
+          <a class="nav-item">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text-Settings">Settings</span>
           </a>
@@ -475,31 +475,8 @@
                           </div>
                         </a>
                       </div>
-
-
             </section>
-            {% comment %}     
-            <div class="date-picker">
-              <span>October</span>
-              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/111fd0868388956f825ac25ee037644d295049379b5acf6e86ea84aed5304cc0?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b" alt="" aria-hidden="true">
-            </div>
-            {% endcomment %}
-            <!-- <section class="events-section">
-              <h2 class="events-title">Your Inventory</h2>
-              <div class="events-container">
-                {% for item in inventory %}
-                  <div class="inventory-item">
-                    <h3>{{ item.item }}</h3>
-                    <button type="submit">Use</button> <button type="submit">Refund</button>
-                    <!-- {% if item.image_id %}
-                      <img src="{% url 'get_image' item.image_id %}" alt="{{ item.item }}" width="100">
-                    {% else %}
-                      <p>No image available</p>
-                    {% endif %} -->
-                  <!-- </div>
-                {% endfor %}
-              </div>
-            </section> -->
+
             <section class="events-section">
               <h2 class="events-title">Your Inventory</h2>
               <div class="ag-format-container">

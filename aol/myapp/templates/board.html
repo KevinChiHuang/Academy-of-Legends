@@ -73,29 +73,29 @@
     <div class="layout-wrapper">
       <nav class="sidebar">
         <h1 class="logo">Academy of Legends</h1>
-        <a href="http://127.0.0.1:8000/home/" class="nav-item nav-item-active">
+        <a href="{% url 'home' %}" class="nav-item nav-item-active">
           <span class="nav-text">Dashboard</span>
         </a>
-        <a href="http://127.0.0.1:8000/board/" class="nav-item nav-item-active">
+        <a href="{% url 'board' %}" class="nav-item nav-item-active">
           <span class="nav-text">Legends Board</span>
         </a>
-        <a href="http://127.0.0.1:8000/shop/" class="nav-item nav-item-active">
+        <a href="{% url 'shop' %}" class="nav-item nav-item-active">
           <span class="nav-text">Shop</span>
         </a>
         {% if is_admin %}
-        <a href="http://127.0.0.1:8000/admin/" class="nav-item nav-item-active">
+        <a href="{% url 'admin' %}" class="nav-item nav-item-active">
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Edit Students</span>
         </a>
         {% endif %}
         {% if is_admin %}
-        <a href="http://127.0.0.1:8000/add/" class="nav-item nav-item-active">
+        <a href="{% url 'add' %}" class="nav-item nav-item-active">
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Add rewards</span>
         </a>
         {% endif %}
         <div class="divider"></div>
-        <a href="http://127.0.0.1:8000/todos/" class="nav-item">
+        <a class="nav-item">
           <span class="nav-text-Settings">Settings</span>
         </a>
         <a href="{% url 'logout' %}" class="nav-item">
@@ -139,23 +139,24 @@
               </thead>
               <tbody>
                 {% for student in students %}
-                <tr>
-                  <td>{{ student.username }}</td>
-                  <td>{{ student.exp }}</td>
-                  <td>{{ student.gold }}</td>
-                  <td>{{ student.hp }}</td>
-                  <td>
-                    <span class="rank-badge rank-{{ forloop.counter }}">
-                      {{ forloop.counter }}
-                    </span>
-                  </td>
-                </tr>
+                  {% if student.username != "admin" %}
+                  <tr>
+                    <td>{{ student.username }}</td>
+                    <td>{{ student.exp }}</td>
+                    <td>{{ student.gold }}</td>
+                    <td>{{ student.hp }}</td>
+                    <td>
+                      <span class="rank-badge rank-{{ forloop.counter }}">
+                        {{ forloop.counter }}
+                      </span>
+                    </td>
+                  </tr>
+                  {% endif %}
                 {% endfor %}
               </tbody>
             </table>
     
             <div class="footer">
-              <!-- Optionally, footer info here -->
             </div>
           </div>
         </div>

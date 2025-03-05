@@ -265,24 +265,24 @@
       <div class="layout-wrapper">
         <nav class="sidebar">
           <h1 class="logo">Academy of Legends</h1>
-          <a href="http://127.0.0.1:8000/home/" class="nav-item nav-item-active">
+          <a href="{% url 'home' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Dashboard</span>
           </a>
-          <a href="http://127.0.0.1:8000/board/#" class="nav-item nav-item-active">
+          <a href="{% url 'board' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Legends Board</span>
           </a>
-          <a href="http://127.0.0.1:8000/shop/" class="nav-item nav-item-active">
+          <a href="{% url 'shop' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Shop</span>
           </a>
-          <a href="http://127.0.0.1:8000/admin/" class="nav-item nav-item-active">
+          <a href="{% url 'admin' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Edit Students</span>
           </a>
           {% if is_admin %}
-          <a href="http://127.0.0.1:8000/add/" class="nav-item nav-item-active">
+          <a href="{% url 'add' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Add rewards</span>
           </a>
@@ -290,7 +290,7 @@
     
           <div class="divider"></div>
         
-          <a href="http://127.0.0.1:8000/todos/" class="nav-item">
+          <a class="nav-item">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text-Settings">Settings</span>
           </a>
@@ -332,22 +332,24 @@
                   </thead>
                   <tbody id="studentTable">
                     {% for student in students %}
-                    <tr data-id="{{ student.id }}">
-                      <td>{{ student.username }}</td>
-                      <td>{{ student.exp }}</td>
-                      <td class="gold">{{ student.gold }}</td>
-                      <td class="hp">{{ student.hp }}</td>
-                      <td>
-                        <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'gold', 'add')">+ Gold</button>
-                        <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'gold', 'minus')">- Gold</button>
-                        <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'hp', 'add')">+ Heart</button>
-                        <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'hp', 'minus')">- Heart</button>
-                      </td>
-                      <td>
-                        <button class="edit-btn">✏️</button>
-                        <button class="delete-btn" onclick="deleteStudent('{{ student.id }}')">🗑️</button>
-                      </td>
-                    </tr>
+                      {% if student.username != "admin" %}
+                      <tr data-id="{{ student.id }}">
+                        <td>{{ student.username }}</td>
+                        <td>{{ student.exp }}</td>
+                        <td class="gold">{{ student.gold }}</td>
+                        <td class="hp">{{ student.hp }}</td>
+                        <td>
+                          <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'gold', 'add')">+ Gold</button>
+                          <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'gold', 'minus')">- Gold</button>
+                          <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'hp', 'add')">+ Heart</button>
+                          <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'hp', 'minus')">- Heart</button>
+                        </td>
+                        <td>
+                          <button class="edit-btn">✏️</button>
+                          <button class="delete-btn" onclick="deleteStudent('{{ student.id }}')">🗑️</button>
+                        </td>
+                      </tr>
+                      {% endif %}
                     {% endfor %}
                   </tbody>
                 </table>

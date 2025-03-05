@@ -22,9 +22,10 @@
     }
 
     .formbold-form-wrapper {
-      margin: 0 auto;
-      max-width: 550px;
-      width: 100%;
+      padding: 30px; 
+      margin: 20px auto; 
+      border-radius: 10px; 
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
       background: white;
     }
 
@@ -63,7 +64,7 @@
     }
     .formbold-form-label {
       color: #07074d;
-      font-weight: 500;
+      font-weight: bold;
       font-size: 14px;
       line-height: 24px;
       display: block;
@@ -113,7 +114,7 @@
       padding: 12px 25px;
       border: none;
       font-weight: 500;
-      background-color: #6a64f1;
+      background-color: #239c47;
       color: white;
       cursor: pointer;
       margin-top: 25px;
@@ -242,6 +243,7 @@
     }
 
     .page-title {
+      padding: 30px;
       color: #202224;
       letter-spacing: -0.11px;
       font: 700 32px Nunito Sans, sans-serif;
@@ -358,6 +360,26 @@
         padding: 13px 20px;
       }
     }
+    .file-upload-button {
+      display: inline-block;
+      background-color: #007bff; /* Button color */
+      color: white;
+      padding: 10px 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .file-upload-button:hover {
+      background-color: #0056b3; /* Darker shade on hover */
+    }
+
+    #upload {
+      display: none; /* Hide the default file input */
+    }
+
   </style>
 
   <div class="dashboard-container">
@@ -365,34 +387,35 @@
       <nav class="sidebar">
         <h1 class="logo">Academy of Legends</h1>
 
-        <a href="http://127.0.0.1:8000/home/" class="nav-item nav-item-active">
+        <a href="{% url 'home' %}" class="nav-item nav-item-active">
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Dashboard</span>
         </a>
         <a
-          href="http://127.0.0.1:8000/board/#"
+          href="{% url 'board' %}"
           class="nav-item nav-item-active"
         >
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Legends Board</span>
         </a>
-        <a href="http://127.0.0.1:8000/shop/" class="nav-item nav-item-active">
+        <a href="{% url 'shop' %}" class="nav-item nav-item-active">
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Shop</span>
         </a>
-        <a href="http://127.0.0.1:8000/admin/" class="nav-item nav-item-active">
+        <a href="{% url 'admin' %}" class="nav-item nav-item-active">
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Edit Students</span>
         </a>
         {% if is_admin %}
-        <a href="http://127.0.0.1:8000/add/" class="nav-item nav-item-active">
+        <a href="{% url 'add' %}" class="nav-item nav-item-active">
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Add rewards</span>
         </a>
         {% endif %}
+        
         <div class="divider"></div>
 
-        <a href="http://127.0.0.1:8000/todos/" class="nav-item">
+        <a class="nav-item">
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text-Settings">Settings</span>
         </a>
@@ -431,7 +454,7 @@
                         type="text"
                         name="item"
                         id="name"
-                        placeholder="Candy"
+                        placeholder="Enter item here..."
                         class="formbold-form-input"
                         required
                       />
@@ -445,7 +468,7 @@
                         type="text"
                         name="gold"
                         id="gold"
-                        placeholder="100"
+                        placeholder="Enter gold here..."
                         class="formbold-form-input"
                         required
                       />
@@ -470,9 +493,9 @@
                   </div>
 
                   <div class="formbold-input-file">
-                    <label for="upload" class="formbold-input-label">
-                      Attach Image
-                      <input type="file" name="upload" id="upload" />
+                      <label for="upload" class="file-upload-button">
+                        Attach Image
+                      <input type="file" name="upload" id="upload" hidden />
                     </label>
                   </div>
 

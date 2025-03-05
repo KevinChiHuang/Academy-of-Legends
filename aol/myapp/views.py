@@ -88,6 +88,8 @@ def home(request):
         'username': user['username'],
         'is_admin': user.get('is_admin', False),
         'gold': user.get('gold', 0),
+        'exp': user.get('exp', 0),
+        'hp': user.get('hp', 0),
         'inventory': inventory
     })
 
@@ -165,6 +167,20 @@ def board(request):
     })
 
 def add(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+
+    user_id = request.session['user_id']
+    user = users_collection.find_one({'_id': ObjectId(user_id)})
+
+    if not user:
+        messages.error(request, "User not found. Please log in again.")
+        return redirect('login')
+
+    if not user.get('is_admin', False):  # Prevent non-admins from accessing
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect('board')
+
     if request.method == "POST":
         item_name = request.POST.get("item")
         gold = request.POST.get("gold")
@@ -185,7 +201,8 @@ def add(request):
 
         return redirect("shop")
 
-    return render(request, "add.html")
+    return render(request, "add.html", {"is_admin": user.get("is_admin", False)})
+
 
 def settings(request):
     return render(request, 'settings.html')
