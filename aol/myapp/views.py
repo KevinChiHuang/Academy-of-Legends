@@ -5,48 +5,13 @@ from django.contrib import messages
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import gridfs
+import json
 
 client = MongoClient('mongodb+srv://User:snoopy123@aol.5fchw.mongodb.net/?retryWrites=true&w=majority')
 db = client['Capstone']
 users_collection = db['users']
 rewards_collection = db['rewards']
 fs = gridfs.GridFS(db) 
-
-# def register(request):
-#     if request.method == 'POST':
-#         form = RegisterForm(request.POST)
-#         if form.is_valid():
-#             username = form.cleaned_data['username']
-#             password = form.cleaned_data['password']
-#             confirm_password = form.cleaned_data["confirm_password"]
-
-#             if password != confirm_password:
-#                 messages.error(request, "Passwords do not match.")
-#                 return redirect("register")    
-
-#             # Check if username already exists
-#             if users_collection.find_one({'username': username}):
-#                 return render(request, 'accounts/register.html', {'form': form, 'error': 'Username already exists.'})
-
-#             # Create a new user document and insert it into the database
-#             user_data = {
-#                 'username': username,
-#                 'password': password, 
-#                 'is_admin': False,
-#                 'gold': 0,
-#                 'exp': 0,
-#                 'hp': 0
-#             }
-#             result = users_collection.insert_one(user_data)  
-#             user_id = result.inserted_id  
-
-#             request.session['user_id'] = str(user_id)
-
-#             return redirect('login')
-#     else:
-#         form = RegisterForm()
-
-#     return render(request, 'accounts/register.html', {'form': form})
 
 def register(request):
     if request.method == 'POST':
@@ -58,7 +23,7 @@ def register(request):
 
             if password != confirm_password:
                 messages.error(request, "Passwords do not match.")
-                return redirect("login")  # Redirect to login page
+                return redirect("login")
 
             # Check if username already exists
             if users_collection.find_one({'username': username}):
@@ -78,12 +43,11 @@ def register(request):
             request.session['user_id'] = str(user_id)
             messages.success(request, "Registration successful! You can now log in.")
 
-            return redirect('login')  # Redirect to login page
+            return redirect('login')
     else:
         form = RegisterForm()
 
     return render(request, 'accounts/login.html', {'form': form})
-
 
 def login(request):
     if request.method == 'POST':
@@ -95,18 +59,17 @@ def login(request):
             # Check if the user exists in the database
             user = users_collection.find_one({'username': username})
             if user:
-                if user['password'] == password:  
-                    request.session['user_id'] = str(user['_id']) 
+                if user['password'] == password:
+                    request.session['user_id'] = str(user['_id'])
                     return redirect('home')
                 else:
                     return render(request, 'accounts/login.html', {'form': form, 'error': 'Incorrect password.'})
             else:
                 return render(request, 'accounts/login.html', {'form': form, 'error': 'User does not exist.'})
     else:
-        form = LoginForm() 
+        form = LoginForm()
 
     return render(request, 'accounts/login.html', {'form': form})
-
 
 def home(request):
     if 'user_id' not in request.session:
@@ -119,7 +82,7 @@ def home(request):
         messages.error(request, "User not found. Please log in again.")
         return redirect('login')
 
-    inventory = user.get('inventory', [])  # Get inventory, default to empty list
+    inventory = user.get('inventory', [])
 
     return render(request, 'home.html', {
         'username': user['username'],
@@ -140,60 +103,60 @@ def admin(request):
         return redirect('login')
 
     if user.get('is_admin', False):
-        students = list(users_collection.find({}, {"password": 0}))  # Exclude passwords
-        return render(request, 'admin.html', {'username': user['username'], 'students': students, 'is_admin': user.get('is_admin', False),})
+        students = list(users_collection.find({}, {"password": 0}))
+        # Rename _id to id (and convert to string) so that templates can use it
+        for student in students:
+            student['id'] = str(student.pop('_id'))
+        return render(request, 'admin.html', {
+            'username': user['username'],
+            'students': students,
+            'is_admin': user.get('is_admin', False),
+        })
     else:
         messages.error(request, "You do not have permission to access this page.")
         return redirect('home')
 
 def logout(request):
-    # Clear the session to log out the user
     request.session.flush()
     messages.success(request, 'You have logged out successfully!')
     return redirect('login')  
 
 def shop(request):
     if 'user_id' not in request.session:
-        return redirect('login') 
+        return redirect('login')
 
-    # Fetch the user's details from the database
-    user_id = request.session['user_id']  
-    user = users_collection.find_one({'_id': ObjectId(user_id)})  
+    user_id = request.session['user_id']
+    user = users_collection.find_one({'_id': ObjectId(user_id)})
 
     if not user:
         messages.error(request, "User not found. Please log in again.")
         return redirect('login')
 
-    # Fetch rewards and assign _id to id
     rewards = list(rewards_collection.find({}))
     for reward in rewards:
-        reward['id'] = str(reward['_id'])  # Convert ObjectId to string and assign to 'id'
+        reward['id'] = str(reward['_id'])
 
-    # Pass rewards to the template
     return render(request, 'shop.html', {
         'username': user['username'],
         'is_admin': user.get('is_admin', False),
         'rewards': rewards,
     })
 
-
-
 def board(request):
     if 'user_id' not in request.session:
-        return redirect('login') 
+        return redirect('login')
 
-    # Fetch the current user's details
-    user_id = request.session['user_id']  
-    user = users_collection.find_one({'_id': ObjectId(user_id)})  
+    user_id = request.session['user_id']
+    user = users_collection.find_one({'_id': ObjectId(user_id)})
 
     if not user:
         messages.error(request, "User not found. Please log in again.")
         return redirect('login')
 
-    # Fetch all students, excluding passwords, sorted by exp in descending order
-    students = list(
-        users_collection.find({}, {"password": 0}).sort("exp", -1)
-    )
+    students = list(users_collection.find({}, {"password": 0}).sort("exp", -1))
+    # Convert _id to string for each student
+    for student in students:
+        student['id'] = str(student.pop('_id'))
     
     return render(request, 'board.html', {
         'username': user['username'],
@@ -206,85 +169,85 @@ def add(request):
         item_name = request.POST.get("item")
         gold = request.POST.get("gold")
         description = request.POST.get("description")
-        image_file = request.FILES.get("upload")  # Get uploaded image
+        image_file = request.FILES.get("upload")
 
-        # Store image in GridFS
         image_id = None
         if image_file:
             image_id = fs.put(image_file.read(), filename=image_file.name, content_type=image_file.content_type)
 
-        # Save reward to MongoDB
         reward = {
             "item": item_name,
             "gold": gold,
             "description": description,
-            "image_id": str(image_id) if image_id else None  # Store image ID as string
+            "image_id": str(image_id) if image_id else None
         }
         db.rewards.insert_one(reward)
 
-        return redirect("shop")  # Redirect to shop page
+        return redirect("shop")
 
     return render(request, "add.html")
 
-
 def settings(request):
-    # if 'user_id' not in request.session:
-    #     return redirect('login') 
-
-    # # Fetch the user's details from the database
-    # user_id = request.session['user_id']  
-    # user = users_collection.find_one({'_id': ObjectId(user_id)})  
-
-    # if not user:
-    #     messages.error(request, "User not found. Please log in again.")
-    #     return redirect('login')
-
-    # Pass the username to the template
-    return render(request, 'settings.html', {
-        # 'username': user['username'],
-        # 'is_admin': user.get('is_admin', False) 
-    })
-
+    return render(request, 'settings.html')
 
 def student_list(request):
-    students = list(users_collection.find({}, {"password": 0}))  # Exclude passwords for security
-    return render(request, 'admin.html','board.html', {'students': students})
-    
+    students = list(users_collection.find({}, {"password": 0}))
+    # Rename _id to id
+    for student in students:
+        student['id'] = str(student.pop('_id'))
+    return render(request, 'admin.html', {'students': students})
 
+# UPDATED: Process JSON from request.body instead of request.POST
 def update_student(request):
     """Handles updating gold and hearts."""
     if request.method == "POST":
-        user_id = request.POST.get("user_id")
-        field = request.POST.get("field")  # 'gold' or 'hp'
-        action = request.POST.get("action")  # 'add' or 'minus'
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "error": "Invalid JSON."}, status=400)
+        user_id = data.get("user_id")
+        field = data.get("field")  # 'gold' or 'hp'
+        action = data.get("action")  # 'add' or 'minus'
+        if not user_id or not field or not action:
+            return JsonResponse({"success": False, "error": "Missing parameters."}, status=400)
 
-        user = users_collection.find_one({"_id": ObjectId(user_id)})
+        try:
+            user = users_collection.find_one({"_id": ObjectId(user_id)})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": "Invalid user id."}, status=400)
 
         if user:
-            new_value = user[field] + 1 if action == "add" else max(0, user[field] - 1)
+            current_value = user.get(field, 0)
+            if action == "add":
+                new_value = current_value + 1
+            else:
+                new_value = max(0, current_value - 1)
             users_collection.update_one({"_id": ObjectId(user_id)}, {"$set": {field: new_value}})
             return JsonResponse({"success": True, field: new_value})
-
     return JsonResponse({"success": False})
 
+# UPDATED: Process JSON from request.body for deletion too.
 def delete_student(request):
     """Handles deleting a user."""
     if request.method == "POST":
-        user_id = request.POST.get("user_id")
-        users_collection.delete_one({"_id": ObjectId(user_id)})
-        return JsonResponse({"success": True})
-
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "error": "Invalid JSON."}, status=400)
+        user_id = data.get("user_id")
+        if user_id:
+            try:
+                users_collection.delete_one({"_id": ObjectId(user_id)})
+            except Exception as e:
+                return JsonResponse({"success": False, "error": "Invalid user id."}, status=400)
+            return JsonResponse({"success": True})
     return JsonResponse({"success": False})
 
 def upload_image(request):
     if request.method == "POST" and request.FILES.get("image"):
         image_file = request.FILES["image"]
-
-        # Store the file in GridFS
         file_id = fs.put(image_file.read(), filename=image_file.name, content_type=image_file.content_type)
-
         return JsonResponse({"message": "File uploaded successfully", "file_id": str(file_id)})
-
     return JsonResponse({"error": "No file uploaded"}, status=400)
 
 def get_image(request, image_id):
@@ -296,7 +259,7 @@ def get_image(request, image_id):
 
 def buy_reward(request, reward_id):
     if 'user_id' not in request.session:
-        return redirect('login')  
+        return redirect('login')
 
     user_id = request.session['user_id']
     user = users_collection.find_one({'_id': ObjectId(user_id)})
@@ -305,35 +268,29 @@ def buy_reward(request, reward_id):
         messages.error(request, "User not found. Please log in again.")
         return redirect('login')
 
-    # Fetch reward from MongoDB
     reward = rewards_collection.find_one({'_id': ObjectId(reward_id)})
 
     if not reward:
         messages.error(request, "Reward not found.")
         return redirect('shop')
 
-    user_gold = int(user['gold'])  
-    reward_price = int(reward['gold'])  
+    user_gold = int(user['gold'])
+    reward_price = int(reward['gold'])
 
-    # Check if user has enough gold
     if user_gold < reward_price:
         messages.error(request, "Not enough gold!")
         return redirect('shop')
 
-    # Deduct gold
     new_gold = user_gold - reward_price
     users_collection.update_one({'_id': ObjectId(user_id)}, {'$set': {'gold': new_gold}})
-    print(user.get('inventory', []))
-    # Add reward to user's inventory
     users_collection.update_one(
-    {'_id': ObjectId(user_id)},
-    {'$push': {'inventory': {
-        'item': reward['item'],
-        'description': reward.get('description', ''),
-        'image_id': str(reward['_id']) if reward.get('image_id') else None  # Ensure image_id is used
+        {'_id': ObjectId(user_id)},
+        {'$push': {'inventory': {
+            'item': reward['item'],
+            'description': reward.get('description', ''),
+            'image_id': str(reward['_id']) if reward.get('image_id') else None
         }}}
     )
-
 
     messages.success(request, f"You have successfully purchased {reward['item']}!")
     return redirect('home')

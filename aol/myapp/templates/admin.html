@@ -265,7 +265,6 @@
       <div class="layout-wrapper">
         <nav class="sidebar">
           <h1 class="logo">Academy of Legends</h1>
-          
           <a href="http://127.0.0.1:8000/home/" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Dashboard</span>
@@ -290,13 +289,12 @@
           {% endif %}
     
           <div class="divider"></div>
-          
         
           <a href="http://127.0.0.1:8000/todos/" class="nav-item">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text-Settings">Settings</span>
           </a>
-          
+        
           <a href="{% url 'logout' %}" class="nav-item">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text-settings">Logout</span>
@@ -306,7 +304,7 @@
         <main class="main-content">
           <header class="top-bar">
             <div class="user-profile">
-              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff91569b03a1f3ea05d264f6177a7ab0e8c181fb9d7738db11cfba2674e7bce0?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b" alt="Profile photo of Moni Roy" class="user-avatar">
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff91569b03a1f3ea05d264f6177a7ab0e8c181fb9d7738db11cfba2674e7bce0?placeholderIfAbsent=true&apiKey=5d941a44acfc4610af810bcf12604f0b" alt="Profile photo" class="user-avatar">
               <div class="user-info">
                 <span class="user-role">Admin</span>
               </div>
@@ -317,85 +315,110 @@
           <div class="page-content">
             <h1 class="page-title">Edit Students</h1>
             <div class="board-container">
-                <div class="container">
-                    <div class="search-bar">
-                        <input type="text" placeholder="Search student name" id="searchInput">
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                {% comment %} <th>Picture</th> {% endcomment %}
-                                <th>Student Name</th>
-                                <th>EXP</th>
-                                <th>Gold</th>
-                                <th>Hearts</th>
-                                <th>Quick Action</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentTable">
-                            {% for student in students %}
-                            <tr data-id="{{ student.username }}">
-                                {% comment %} <td><img src="image1.jpg" alt="Student"></td> {% endcomment %}
-                                <td>{{ student.username }}</td>
-                                <td>{{ student.exp }}</td>
-                                <td class="gold">{{ student.gold }}</td>
-                                <td class="hp">{{ student.hp }}</td>
-                                <td>
-                                    <button class="quick-action-btn" onclick="updateValue('{{ student.username }}', 'gold', 'add')">+ Gold</button>
-                                    <button class="quick-action-btn" onclick="updateValue('{{ student.username }}', 'gold', 'minus')">- Gold</button>
-                                    <button class="quick-action-btn" onclick="updateValue('{{ student.username }}', 'hp', 'add')">+ Heart</button>
-                                    <button class="quick-action-btn" onclick="updateValue('{{ student.username }}', 'hp', 'minus')">- Heart</button>
-                                </td>
-                                <td>
-                                    <button class="edit-btn">✏️</button>
-                                    <button class="delete-btn" onclick="deleteStudent('{{ student.username }}')">🗑️</button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+              <div class="container">
+                <div class="search-bar">
+                  <input type="text" placeholder="Search student name" id="searchInput">
                 </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Student Name</th>
+                      <th>EXP</th>
+                      <th>Gold</th>
+                      <th>Hearts</th>
+                      <th>Quick Action</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="studentTable">
+                    {% for student in students %}
+                    <tr data-id="{{ student.id }}">
+                      <td>{{ student.username }}</td>
+                      <td>{{ student.exp }}</td>
+                      <td class="gold">{{ student.gold }}</td>
+                      <td class="hp">{{ student.hp }}</td>
+                      <td>
+                        <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'gold', 'add')">+ Gold</button>
+                        <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'gold', 'minus')">- Gold</button>
+                        <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'hp', 'add')">+ Heart</button>
+                        <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'hp', 'minus')">- Heart</button>
+                      </td>
+                      <td>
+                        <button class="edit-btn">✏️</button>
+                        <button class="delete-btn" onclick="deleteStudent('{{ student.id }}')">🗑️</button>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
             </div>
-        </div>
-           
           </div>
         </main>
       </div>
     </div>
+    
+    <!-- JavaScript -->
+    <script>
+      // CSRF helper function to retrieve CSRF token from cookies
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+      }
+      
+      // Function to update gold or hearts
+      function updateValue(userId, field, action) {
+        fetch("{% url 'update_student' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie('csrftoken')
+          },
+          body: JSON.stringify({ user_id: userId, field: field, action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            document.querySelector(`tr[data-id="${userId}"] .${field}`).innerText = data[field];
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      }
+      
+      // Function to delete a student
+      function deleteStudent(userId) {
+        if (!confirm("Are you sure you want to delete this student?")) return;
+        
+        fetch("{% url 'delete_student' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie('csrftoken')
+          },
+          body: JSON.stringify({ user_id: userId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            document.querySelector(`tr[data-id="${userId}"]`).remove();
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      }
+    </script>
+    
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-</html>
-
-<script>
-  function updateValue(userId, field, action) {
-      fetch("{% url 'update_student' %}", {
-          method: "POST",
-          headers: { "X-CSRFToken": "{{ csrf_token }}" },
-          body: new URLSearchParams({ user_id: userId, field: field, action: action })
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              document.querySelector(`tr[data-id="${userId}"] .${field}`).innerText = data[field];
-          }
-      });
-  }
-
-  function deleteStudent(userId) {
-      if (!confirm("Are you sure you want to delete this student?")) return;
-      
-      fetch("{% url 'delete_student' %}", {
-          method: "POST",
-          headers: { "X-CSRFToken": "{{ csrf_token }}" },
-          body: new URLSearchParams({ user_id: userId })
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              document.querySelector(`tr[data-id="${userId}"]`).remove();
-          }
-      });
-  }
-</script>
+  </body>
+  </html>
