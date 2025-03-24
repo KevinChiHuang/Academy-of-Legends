@@ -8,10 +8,7 @@
         margin: 0 auto;
       }
       
-      
-      body {
-        background-color: #000;
-      }
+
       .ag-courses_box {
         display: -webkit-box;
         display: -ms-flexbox;
@@ -19,7 +16,7 @@
         -webkit-box-align: start;
         -ms-flex-align: start;
         align-items: flex-start;
-        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
         padding: 50px 0;
       }
       .ag-courses_item {
@@ -470,7 +467,7 @@
                           <div class="ag-courses-item_date-box">
                             Placement:
                             <span class="ag-courses-item_date">
-                              1
+                              {{ rank }}
                             </span>
                           </div>
                         </a>
@@ -487,11 +484,6 @@
                       <div class="ag-courses-item_link1">
                         <div class="ag-courses-item_title">{{ item.item }}</div>
             
-                        <div class="d-flex mt-2">
-                          <button class="btn btn-success btn-sm me-1" type="submit">Use</button>
-                          <p> </p>
-                          <button class="btn btn-danger btn-sm" type="submit">Refund</button>
-                        </div>
                       </div>
                     </div>
                   {% endfor %}
@@ -502,10 +494,10 @@
             
             
 
-          <section class="events-section">
+          <!-- <section class="events-section">
               <h2 class="events-title">Events</h2>
               <div class="events-container"></div>
-          </section>
+          </section> -->
           </div>
         </main>
       </div>

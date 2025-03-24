@@ -17,5 +17,6 @@ urlpatterns = [
     path('upload/', views.upload_image, name='upload_image'),
     path("get_image/<str:image_id>/", views.get_image, name="get_image"),
     path('buy/<str:reward_id>/', views.buy_reward, name='buy_reward'),
+    path('remove-reward/<str:reward_id>/', views.remove_reward, name='remove_reward'),
 ]
 

@@ -83,6 +83,10 @@ def home(request):
         return redirect('login')
 
     inventory = user.get('inventory', [])
+    
+    students = list(users_collection.find({}).sort("exp", -1))
+    ranking = {str(student['_id']): index + 1 for index, student in enumerate(students)}
+    user_rank = ranking.get(str(user['_id']), "N/A")
 
     return render(request, 'home.html', {
         'username': user['username'],
@@ -90,6 +94,7 @@ def home(request):
         'gold': user.get('gold', 0),
         'exp': user.get('exp', 0),
         'hp': user.get('hp', 0),
+        'rank': user_rank,
         'inventory': inventory
     })
 
@@ -140,6 +145,7 @@ def shop(request):
 
     return render(request, 'shop.html', {
         'username': user['username'],
+        'gold': user['gold'],
         'is_admin': user.get('is_admin', False),
         'rewards': rewards,
     })
@@ -311,3 +317,24 @@ def buy_reward(request, reward_id):
 
     messages.success(request, f"You have successfully purchased {reward['item']}!")
     return redirect('home')
+
+def remove_reward(request, reward_id):
+    if 'user_id' not in request.session:
+        return redirect('login')
+
+    user_id = request.session['user_id']
+    user = users_collection.find_one({'_id': ObjectId(user_id)})
+
+    if not user or not user.get('is_admin', False):
+        messages.error(request, "You don't have permission to delete items.")
+        return redirect('shop')
+
+    # Delete the reward from MongoDB
+    result = rewards_collection.delete_one({'_id': ObjectId(reward_id)})
+
+    if result.deleted_count > 0:
+        messages.success(request, "Item removed successfully.")
+    else:
+        messages.error(request, "Item not found or could not be deleted.")
+
+    return redirect('shop')

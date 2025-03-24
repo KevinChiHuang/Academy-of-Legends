@@ -465,7 +465,7 @@
 
                     <div>
                       <input
-                        type="text"
+                        type="number"
                         name="gold"
                         id="gold"
                         placeholder="Enter gold here..."
@@ -493,12 +493,12 @@
                   </div>
 
                   <div class="formbold-input-file">
-                      <label for="upload" class="file-upload-button">
-                        Attach Image
+                    <label for="upload" class="file-upload-button">
+                      Attach Image
                       <input type="file" name="upload" id="upload" hidden />
                     </label>
+                    <div><span id="fileMessage" class="file-message"></span></div>
                   </div>
-
                   <button class="formbold-btn" type="submit">Add Item</button>
                 </form>
               </div>
@@ -523,4 +523,16 @@
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"
   ></script>
+  <script>
+    document.getElementById("upload").addEventListener("change", function() {
+      var fileMessage = document.getElementById("fileMessage");
+      if (this.files.length > 0) {
+        fileMessage.textContent = "Image attached: " + this.files[0].name;
+        fileMessage.style.color = "green";
+      } else {
+        fileMessage.textContent = "";
+      }
+    });
+  </script>
+  
 </html>

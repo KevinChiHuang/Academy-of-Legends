@@ -11,7 +11,7 @@
     html {
       font-family: Geneva, Verdana, sans-serif;
     }
-
+    
     .dashboard-container {
       background: #fff;
       overflow: hidden;
@@ -218,6 +218,7 @@
       cursor: pointer;
     }
 
+
     @media (max-width: 991px) {
       .layout-wrapper {
         flex-direction: column;
@@ -304,6 +305,7 @@
         </header>
         <div class="page-content">
           <h1 class="page-title">Reward Shop</h1>
+          <h1 class="page-title">Current Gold: {{ gold }}</h1>
           <div class="container">
             <div class="product-grid">
               {% for reward in rewards %}
@@ -323,10 +325,18 @@
                 <p>{{ reward.description }}</p>
                 
 
-                <form action="{% url 'buy_reward' reward.id %}" method="post">
-                  {% csrf_token %}
-                  <button type="submit">Buy</button>
-                </form>
+                {% if is_admin %}
+                  <form action="{% url 'remove_reward' reward.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                  </form>
+                {% elif not is_admin %}
+                  <form action="{% url 'buy_reward' reward.id %}" method="post">
+                      {% csrf_token %}
+                      <button type="submit">Buy</button>
+                  </form>
+                {% endif %}
+            
     
               </div>
               {% endfor %}
