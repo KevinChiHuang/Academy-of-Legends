@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from .forms import RegisterForm, LoginForm
 from django.contrib import messages
 from pymongo import MongoClient
+from django.contrib.auth.hashers import make_password, check_password
 from bson.objectid import ObjectId
 import gridfs
 import json
@@ -29,9 +30,12 @@ def register(request):
             if users_collection.find_one({'username': username}):
                 return render(request, 'accounts/login.html', {'form': form, 'error': 'Username already exists.'})
 
+            # Hash the password before storing
+            hashed_password = make_password(password)
+
             user_data = {
                 'username': username,
-                'password': password,  
+                'password': hashed_password,  
                 'is_admin': False,
                 'gold': 0,
                 'exp': 0,
@@ -56,20 +60,27 @@ def login(request):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
 
-            # Check if the user exists in the database
             user = users_collection.find_one({'username': username})
-            if user:
-                if user['password'] == password:
-                    request.session['user_id'] = str(user['_id'])
-                    return redirect('home')
+
+            if user and check_password(password, user['password']):  # Check hashed password
+                request.session['user_id'] = str(user['_id'])
+                request.session['is_admin'] = user.get('is_admin', False)  # Store admin status
+
+                messages.success(request, f"Welcome, {username}!")
+
+                if user.get('is_admin', False):  # If user is an admin, redirect to admin page
+                    return redirect('admin')  # Make sure 'admin_page' is mapped to `admin.html`
                 else:
-                    return render(request, 'accounts/login.html', {'form': form, 'error': 'Incorrect password.'})
+                    return redirect('home')
+
             else:
-                return render(request, 'accounts/login.html', {'form': form, 'error': 'User does not exist.'})
+                messages.error(request, "Invalid username or password.")
+
     else:
         form = LoginForm()
 
     return render(request, 'accounts/login.html', {'form': form})
+
 
 def home(request):
     if 'user_id' not in request.session:

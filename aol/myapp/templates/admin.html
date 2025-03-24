@@ -265,10 +265,12 @@
       <div class="layout-wrapper">
         <nav class="sidebar">
           <h1 class="logo">Academy of Legends</h1>
+          {% if not is_admin %}
           <a href="{% url 'home' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Dashboard</span>
           </a>
+          {% endif %}
           <a href="{% url 'board' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Legends Board</span>

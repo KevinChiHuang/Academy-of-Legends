@@ -387,10 +387,12 @@
       <nav class="sidebar">
         <h1 class="logo">Academy of Legends</h1>
 
+        {% if not is_admin %}
         <a href="{% url 'home' %}" class="nav-item nav-item-active">
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Dashboard</span>
         </a>
+        {% endif %}
         <a
           href="{% url 'board' %}"
           class="nav-item nav-item-active"
@@ -415,10 +417,12 @@
         
         <div class="divider"></div>
 
+        {% if is_admin %}
         <a class="nav-item">
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text-Settings">Settings</span>
         </a>
+        {% endif %}
 
         <a href="{% url 'logout' %}" class="nav-item">
           <span class="nav-icon" aria-hidden="true"></span>
