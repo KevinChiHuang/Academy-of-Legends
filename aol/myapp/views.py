@@ -122,13 +122,14 @@ def admin(request):
 
     if user.get('is_admin', False):
         students = list(users_collection.find({}, {"password": 0}))
-        # Rename _id to id (and convert to string) so that templates can use it
+        # Convert ObjectId to string
         for student in students:
-            student['id'] = str(student.pop('_id'))
+            student['id'] = str(student['_id'])
+            del student['_id']
         return render(request, 'admin.html', {
             'username': user['username'],
             'students': students,
-            'is_admin': user.get('is_admin', False),
+            'is_admin': True,
         })
     else:
         messages.error(request, "You do not have permission to access this page.")
@@ -231,7 +232,6 @@ def student_list(request):
         student['id'] = str(student.pop('_id'))
     return render(request, 'admin.html', {'students': students})
 
-# UPDATED: Process JSON from request.body instead of request.POST
 def update_student(request):
     """Handles updating gold and hearts."""
     if request.method == "POST":
@@ -239,9 +239,11 @@ def update_student(request):
             data = json.loads(request.body)
         except json.JSONDecodeError:
             return JsonResponse({"success": False, "error": "Invalid JSON."}, status=400)
+        
         user_id = data.get("user_id")
         field = data.get("field")  # 'gold' or 'hp'
         action = data.get("action")  # 'add' or 'minus'
+        
         if not user_id or not field or not action:
             return JsonResponse({"success": False, "error": "Missing parameters."}, status=400)
 
@@ -252,12 +254,23 @@ def update_student(request):
 
         if user:
             current_value = user.get(field, 0)
-            if action == "add":
-                new_value = current_value + 1
+            
+            # Modified section for gold +25
+            if field == 'gold' and action == 'add':
+                new_value = current_value + 25
             else:
-                new_value = max(0, current_value - 1)
-            users_collection.update_one({"_id": ObjectId(user_id)}, {"$set": {field: new_value}})
+                # Original logic for other operations
+                if action == "add":
+                    new_value = current_value + 1
+                else:
+                    new_value = max(0, current_value - 1)
+            
+            users_collection.update_one(
+                {"_id": ObjectId(user_id)}, 
+                {"$set": {field: new_value}}
+            )
             return JsonResponse({"success": True, field: new_value})
+    
     return JsonResponse({"success": False})
 
 # UPDATED: Process JSON from request.body for deletion too.
@@ -316,13 +329,13 @@ def buy_reward(request, reward_id):
         return redirect('shop')
 
     new_gold = user_gold - reward_price
-    users_collection.update_one({'_id': ObjectId(user_id)}, {'$set': {'gold': new_gold}})
     users_collection.update_one(
         {'_id': ObjectId(user_id)},
         {'$push': {'inventory': {
+            'item_id': str(reward['_id']),  # Store reward ID
             'item': reward['item'],
             'description': reward.get('description', ''),
-            'image_id': str(reward['_id']) if reward.get('image_id') else None
+            'image_id': str(reward.get('image_id', ''))
         }}}
     )
 
@@ -349,3 +362,125 @@ def remove_reward(request, reward_id):
         messages.error(request, "Item not found or could not be deleted.")
 
     return redirect('shop')
+
+def edit_student(request, student_id):
+    if not request.session.get('is_admin'):
+        return redirect('login')
+    
+    try:
+        # Get student document
+        student = users_collection.find_one({'_id': ObjectId(student_id)})
+        if not student:
+            raise Exception("Student not found")
+
+        # Convert MongoDB ObjectId to string
+        student['id'] = str(student['_id'])
+        
+        # Handle inventory safely
+        inventory = []
+        for item in student.get('inventory', []):
+            try:
+                # First try to get item_id
+                item_id_str = item.get('item_id')
+                
+                # Fallback for legacy items without item_id
+                if not item_id_str and 'item' in item:
+                    reward = rewards_collection.find_one({'item': item['item']})
+                    if reward:
+                        item_id_str = str(reward['_id'])
+                
+                if not item_id_str:
+                    continue
+                    
+                item_id = ObjectId(item_id_str)
+                reward = rewards_collection.find_one({'_id': item_id})
+                
+                if reward:
+                    inventory.append({
+                        'id': str(reward['_id']),
+                        'name': reward.get('item', 'Unknown'),
+                        'description': reward.get('description', ''),
+                        'image_id': str(reward.get('image_id', ''))
+                    })
+            except Exception as e:
+                print(f"Skipping invalid item: {str(e)}")
+                continue
+
+        # Prepare student data with safe defaults
+        student_data = {
+            'id': student['id'],
+            'username': student.get('username', ''),
+            'email': student.get('email', ''),
+            'exp': student.get('exp', 0),
+            'gold': student.get('gold', 0),
+            'hp': student.get('hp', 0),
+            'inventory': inventory
+        }
+
+        return render(request, 'settings.html', {
+            'student': student_data,
+            'is_admin': True
+        })
+
+    except Exception as e:
+        print(f"Error in edit_student: {str(e)}")
+        messages.error(request, "Error loading student details")
+        return redirect('admin')
+
+
+
+    
+def update_student_details(request, student_id):
+    if not request.session.get('is_admin'):
+        return redirect('login')
+    
+    try:
+        if request.method == "POST":
+            # Validate data types
+            update_data = {
+                'username': request.POST.get('username'),
+                'email': request.POST.get('email'),
+                'exp': int(request.POST.get('exp', 0)),
+                'gold': int(request.POST.get('gold', 0)),
+                'hp': int(request.POST.get('hp', 0))
+            }
+
+            # Update database
+            result = users_collection.update_one(
+                {'_id': ObjectId(student_id)},
+                {'$set': update_data}
+            )
+
+            if result.modified_count > 0:
+                messages.success(request, "Student updated successfully!")
+            else:
+                messages.info(request, "No changes detected")
+
+            return redirect('admin')
+
+    except ValueError as e:
+        messages.error(request, f"Invalid number format: {str(e)}")
+    except Exception as e:
+        messages.error(request, f"Error updating student: {str(e)}")
+    
+    return redirect('edit_student', student_id=student_id)
+
+def delete_item(request, student_id, item_id):
+    if not request.session.get('is_admin'):
+        return JsonResponse({"success": False, "error": "Unauthorized"}, status=403)
+    
+    try:
+        result = users_collection.update_one(
+            {'_id': ObjectId(student_id)},
+            {'$pull': {'inventory': {'item_id': item_id}}}
+        )
+        
+        if result.modified_count > 0:
+            return JsonResponse({"success": True})
+        return JsonResponse({"success": False, "error": "Item not found"})
+        
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=400)
+    
+
+    

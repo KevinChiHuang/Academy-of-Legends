@@ -1,4 +1,17 @@
+{% comment %} {% if messages %}
+<div class="alert-container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %} {% endcomment %}
+
+
 <!DOCTYPE html>
+
+
 <html lang="en">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
@@ -344,51 +357,101 @@
           </header>
     
           <div class="page-content">
-            <h1 class="page-title">Editing xd</h1>
+            <h1 class="page-title">Editing {{ student.username }}</h1>
             <div class="container">
-              <div class="container rounded bg-white mt-5 mb-5">
-                <div class="row">
-                    <div class="col-md-3 border-right">
-                        <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span class="font-weight-bold">xd</span><span class="text-black-50">xddddd@xd.com</span><span> </span></div>
-                    </div>
-                    <div class="col-md-5 border-right">
-                        <div class="p-3 py-5">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h4 class="text-right">Profile Settings</h4>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col-md-6"><label class="labels">Name</label><input type="text" class="form-control" placeholder="first name" value=""></div>
-                                <div class="col-md-6"><label class="labels">Lastname</label><input type="text" class="form-control" value="" placeholder="lastname"></div>
-                            </div>
-                            <div class="row mt-3">
-                                
-                                {% comment %} <div class="col-md-12"><label class="labels">Address Line 1</label><input type="text" class="form-control" placeholder="enter address line 1" value=""></div>
-                                <div class="col-md-12"><label class="labels">Address Line 2</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
-                                <div class="col-md-12"><label class="labels">Postcode</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
-                                <div class="col-md-12"><label class="labels">State</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
-                                <div class="col-md-12"><label class="labels">Area</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div> {% endcomment %}
-                                <div class="col-md-12"><label class="labels">Email ID</label><input type="text" class="form-control" placeholder="enter email id" value=""></div>
-                                
-                            </div>
-                            <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="button">Save Profile</button></div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="p-3 py-5">
-                            <div class="d-flex justify-content-between align-items-center experience"><span>Edit Experience</span><span class="border px-3 p-1 add-experience"><i class="fa fa-plus"></i>&nbsp;Save</span></div><br>
-                            <div class="col-md-12"><label class="labels">Experience</label><input type="text" class="form-control" placeholder="experience" value=""></div> <br>
-                            <div class="col-md-12"><label class="labels">Gold</label><input type="text" class="form-control" placeholder="gold" value=""></div><br>
-                            <div class="col-md-12"><label class="labels">Hearts</label><input type="text" class="form-control" placeholder="hearts" value=""></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div>
-            </div>
+                <div class="container rounded bg-white mt-5 mb-5">
+                    <form method="POST" action="{% url 'update_student_details' student.id %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-8 border-right">
+                                <div class="p-3 py-5">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4 class="text-right">Student Profile</h4>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <label class="labels">Username</label>
+                                            <input type="text" class="form-control" name="username" 
+                                                   value="{{ student.username }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="labels">Email</label>
+                                            <input type="email" class="form-control" name="email" 
+                                                   value="{{ student.email }}">
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <label class="labels">Experience</label>
+                                            <input type="number" class="form-control" name="exp" 
+                                                   value="{{ student.exp }}" min="0">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="labels">Gold</label>
+                                            <input type="number" class="form-control" name="gold" 
+                                                   value="{{ student.gold }}" min="0">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="labels">Hearts</label>
+                                            <input type="number" class="form-control" name="hp" 
+                                                   value="{{ student.hp }}" min="0">
+                                        </div>
+                                    </div>
+                                    <div class="mt-5 text-center">
+                                        <div class="mt-5 text-center">
 
-              </div>
+
+                                          <button type="submit" class="btn btn-primary profile-button">Save Changes</button>
+                                          
+                                          <a href="{% url 'admin' %}" class="btn btn-secondary">Cancel</a>
+                                      </div>
+
+                                      <div class="row mt-5">
+                                        <div class="col-md-12">
+                                            <h4>Purchased Items</h4>
+                                            <div class="row">
+                                                {% for item in student.inventory %}
+                                                <div class="col-md-4 mb-4">
+                                                    <div class="card">
+                                                        {% if item.image_id %}
+                                                        <img src="{% url 'get_image' item.image_id %}" 
+                                                             class="card-img-top" 
+                                                             style="height: 200px; object-fit: cover;">
+                                                        {% endif %}
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">{{ item.name }}</h5>
+                                                            <p class="card-text">{{ item.description }}</p>
+                                                            <div class="d-flex justify-content-between">
+                                                                <small class="text-muted">
+                                                                    Purchased: {{ item.purchase_date|date:"M d, Y" }}
+                                                                </small>
+                                                                <button class="btn btn-danger btn-sm" 
+                                                                        onclick="deleteItem('{{ student.id }}', '{{ item.id }}')">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% empty %}
+                                                <div class="col-12">
+                                                    <div class="alert alert-info">No items purchased yet</div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div><button type="button" class="btn btn-danger" onclick="deleteStudent('{{ student.id }}')">Delete Student</button>
             </div>
+            
+        </div>
         </main>
+        
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -398,3 +461,71 @@
 
 
 
+<script>
+  function deleteStudent(userId) {
+      if (!confirm("Are you sure you want to permanently delete this student?")) return;
+      
+      fetch("{% url 'delete_student' %}", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCookie('csrftoken')
+          },
+          body: JSON.stringify({ user_id: userId })
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              window.location.href = "{% url 'admin' %}";
+          } else {
+              alert('Failed to delete student');
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while deleting');
+      });
+  }
+  
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.startsWith(name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+  </script>
+
+
+  <script>
+    function deleteItem(studentId, itemId) {
+        if (!confirm("Are you sure you want to remove this item?")) return;
+        
+        fetch(`/delete-item/${studentId}/${itemId}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload(); // Refresh to show changes
+            } else {
+                alert('Failed to remove item');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred');
+        });
+    }
+    </script>

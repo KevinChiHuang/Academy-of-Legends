@@ -50,21 +50,56 @@
       font-weight: bold;
       text-align: center;
     }
-    /* Example rank colors (customize as needed) */
-    .rank-1 { background-color: #a5f3dc; }
-    .rank-2 { background-color: #cfd1ff; }
-    .rank-3 { background-color: #ffc6c4; }
+    /* Rank colors */
+    .rank-1 { background-color: #FFD700; } /* Gold */
+    .rank-2 { background-color: #C0C0C0; } /* Silver */
+    .rank-3 { background-color: #CD7F32; } /* Bronze */
     .rank-4 { background-color: #a5f3dc; }
     .rank-5 { background-color: #cfd1ff; }
     .rank-6 { background-color: #a5f3dc; }
     .rank-7 { background-color: #cfd1ff; }
-    .rank-8 { background-color: #ffc6c4; }
-    .rank-9 { background-color: #a5f3dc; }
+    .rank-8 { background-color: #a5f3dc; }
+    .rank-9 { background-color: #cfd1ff; }
+    .rank-10 { background-color: #a5f3dc; }
     .footer { text-align: center; margin-top: 20px; font-size: 14px; color: #777; }
     @media (max-width: 991px) {
       .layout-wrapper { flex-direction: column; }
       .sidebar, .main-content { width: 100%; }
       .top-bar { padding: 13px 20px; }
+    }
+    /* Add these new styles */
+    .filter-container select {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #fff;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .filter-container select:focus {
+      border-color: #4880ff;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(72, 128, 255, 0.2);
+    }
+    .filter-container button {
+      padding: 8px 12px;
+      border: 1px solid #d9534f;
+      border-radius: 4px;
+      background-color: #fff;
+      color: #d9534f;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .filter-container button:hover {
+      background-color: #d9534f;
+      color: white;
+    }
+    .sort-arrow {
+      margin-left: 5px;
+      font-size: 12px;
+    }
+    .active-sort {
+      background-color: #f0f7ff;
     }
   </style>
 </head>
@@ -122,40 +157,47 @@
         </header>
   
         <div class="page-content">
-          <h1 class="page-title">Legends Board</h1>
+          <h1 class="page-title">Top 10 Legends</h1>
           <div class="board-container">
             <div class="board-header">
               <div class="filter-container">
-                <select><option>Date</option></select>
-                <select><option>Type</option></select>
-                <select><option>Status</option></select>
-                <button>Reset Filter</button>
+                <select id="sortField">
+                  <option value="username">Sort by Name</option>
+                  <option value="exp">Sort by EXP</option>
+                  <option value="hp">Sort by Hearts</option>
+                </select>
+                <select id="sortDirection">
+                  <option value="-1">Descending</option>
+                  <option value="1">Ascending</option>
+                </select>
+                <button id="applySort">Apply Sort</button>
+                <button id="resetSort">Reset</button>
               </div>
             </div>
     
             <table>
               <thead>
                 <tr>
-                  <th>NAME</th>
+                  <th>Rank</th>
+                  <th>Name</th>
                   <th>EXP</th>
                   <th>Gold</th>
                   <th>Hearts</th>
-                  <th>Rank</th>
                 </tr>
               </thead>
-              <tbody>
-                {% for student in students %}
+              <tbody id="studentTable">
+                {% for student in students|slice:":10" %}
                   {% if student.username != "admin" %}
                   <tr>
-                    <td>{{ student.username }}</td>
-                    <td>{{ student.exp }}</td>
-                    <td>{{ student.gold }}</td>
-                    <td>{{ student.hp }}</td>
                     <td>
                       <span class="rank-badge rank-{{ forloop.counter }}">
                         {{ forloop.counter }}
                       </span>
                     </td>
+                    <td>{{ student.username }}</td>
+                    <td>{{ student.exp }}</td>
+                    <td>{{ student.gold }}</td>
+                    <td>{{ student.hp }}</td>
                   </tr>
                   {% endif %}
                 {% endfor %}
@@ -163,6 +205,7 @@
             </table>
     
             <div class="footer">
+              Showing top 10 legends by EXP
             </div>
           </div>
         </div>
@@ -172,5 +215,90 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const sortField = document.getElementById('sortField');
+      const sortDirection = document.getElementById('sortDirection');
+      const applySort = document.getElementById('applySort');
+      const resetSort = document.getElementById('resetSort');
+      const tableBody = document.getElementById('studentTable');
+      let studentsData = [];
+
+      // Store original student data (top 10 only)
+      {% for student in students|slice:":10" %}
+        {% if student.username != "admin" %}
+          studentsData.push({
+            username: '{{ student.username }}',
+            exp: {{ student.exp }},
+            gold: {{ student.gold }},
+            hp: {{ student.hp }},
+            rank: {{ forloop.counter }}
+          });
+        {% endif %}
+      {% endfor %}
+
+      // Apply sorting
+      function sortStudents() {
+        const field = sortField.value;
+        const direction = parseInt(sortDirection.value);
+        
+        studentsData.sort((a, b) => {
+          if (a[field] < b[field]) return -1 * direction;
+          if (a[field] > b[field]) return 1 * direction;
+          return 0;
+        });
+
+        renderTable();
+      }
+
+      // Render sorted table
+      function renderTable() {
+        let html = '';
+        studentsData.forEach((student, index) => {
+          html += `
+            <tr>
+              <td>
+                <span class="rank-badge rank-${index + 1}">
+                  ${index + 1}
+                </span>
+              </td>
+              <td>${student.username}</td>
+              <td>${student.exp}</td>
+              <td>${student.gold}</td>
+              <td>${student.hp}</td>
+            </tr>
+          `;
+        });
+        tableBody.innerHTML = html;
+      }
+
+      // Reset to original order
+      function resetTable() {
+        studentsData = [];
+        {% for student in students|slice:":10" %}
+          {% if student.username != "admin" %}
+            studentsData.push({
+              username: '{{ student.username }}',
+              exp: {{ student.exp }},
+              gold: {{ student.gold }},
+              hp: {{ student.hp }},
+              rank: {{ forloop.counter }}
+            });
+          {% endif %}
+        {% endfor %}
+        sortField.value = 'username';
+        sortDirection.value = '-1';
+        renderTable();
+      }
+
+      // Event listeners
+      applySort.addEventListener('click', sortStudents);
+      resetSort.addEventListener('click', resetTable);
+
+      // Initial render
+      renderTable();
+    });
+  </script>
 </body>
 </html>
