@@ -505,27 +505,50 @@
 
 
   <script>
-    function deleteItem(studentId, itemId) {
-        if (!confirm("Are you sure you want to remove this item?")) return;
+    async function deleteItem(studentId, itemId) {
+        if (!confirm("Permanently remove this item from the student's inventory?")) return;
         
-        fetch(`/delete-item/${studentId}/${itemId}/`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCookie('csrftoken')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
+        try {
+            const response = await fetch(`/delete-item/${studentId}/${itemId}/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie('csrftoken')
+                }
+            });
+            
+            const data = await response.json();
+            
             if (data.success) {
-                location.reload(); // Refresh to show changes
+                // Remove item card visually
+                document.querySelector(`[data-item-id="${itemId}"]`).remove();
+                
+                // Show success message
+                showToast('Item removed successfully', 'success');
+                
+                // Update empty state
+                if (!document.querySelector('.inventory-card')) {
+                    document.querySelector('.inventory-container').innerHTML = `
+                        <div class="alert alert-info">No items remaining</div>
+                    `;
+                }
             } else {
-                alert('Failed to remove item');
+                showToast(`Failed: ${data.error || 'Unknown error'}`, 'danger');
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred');
-        });
+        } catch (error) {
+            console.error('Delete error:', error);
+            showToast('Network error - please try again', 'danger');
+        }
+    }
+    
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type} alert-dismissible fade show`;
+        toast.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.toast-container').appendChild(toast);
+        setTimeout(() => toast.remove(), 5000);
     }
     </script>

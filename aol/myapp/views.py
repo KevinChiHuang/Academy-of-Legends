@@ -470,17 +470,52 @@ def delete_item(request, student_id, item_id):
         return JsonResponse({"success": False, "error": "Unauthorized"}, status=403)
     
     try:
+        # Direct string match without ObjectId conversion
         result = users_collection.update_one(
             {'_id': ObjectId(student_id)},
             {'$pull': {'inventory': {'item_id': item_id}}}
         )
-        
+
         if result.modified_count > 0:
             return JsonResponse({"success": True})
-        return JsonResponse({"success": False, "error": "Item not found"})
+        return JsonResponse({
+            "success": False,
+            "error": "Item not found in inventory"
+        })
         
     except Exception as e:
-        return JsonResponse({"success": False, "error": str(e)}, status=400)
+        return JsonResponse({
+            "success": False,
+            "error": f"Server error: {str(e)}"
+        }, status=500)
     
 
     
+def final_migration(request):
+    if not request.session.get('is_admin'):
+        return HttpResponseForbidden()
+    
+    updated = 0
+    students = users_collection.find({'inventory': {'$exists': True}})
+    
+    for student in students:
+        new_inventory = []
+        for item in student.get('inventory', []):
+            # Force string format for item_id
+            if 'item_id' not in item:
+                reward = rewards_collection.find_one({'item': item.get('item')})
+                if reward:
+                    item['item_id'] = str(reward['_id'])
+                    updated += 1
+            # Ensure item_id is string
+            elif isinstance(item['item_id'], ObjectId):
+                item['item_id'] = str(item['item_id'])
+                updated += 1
+            new_inventory.append(item)
+        
+        users_collection.update_one(
+            {'_id': student['_id']},
+            {'$set': {'inventory': new_inventory}}
+        )
+    
+    return HttpResponse(f"Final migration completed. Updated {updated} items.")

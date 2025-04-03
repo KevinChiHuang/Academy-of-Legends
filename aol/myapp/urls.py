@@ -27,4 +27,6 @@ urlpatterns = [
     path('buy/<str:reward_id>/', views.buy_reward, name='buy_reward'),
     path('remove-reward/<str:reward_id>/', views.remove_reward, name='remove_reward'),
     path('delete-item/<str:student_id>/<str:item_id>/', views.delete_item, name='delete_item'),
+
+
 ]
