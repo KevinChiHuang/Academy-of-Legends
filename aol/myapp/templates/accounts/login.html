@@ -1,3 +1,4 @@
+{% load static %}
 <style>
     :root {
         --primary-color: #4EA685;
@@ -246,7 +247,12 @@
     .container.sign-up .img.sign-up img {
         transform: translateX(0);
     }
-    
+    .text.sign-in img {
+    width: 45vw;
+    transition: 1s ease-in-out;
+    transition-delay: .4s;
+    border-radius: 10px; /* Adjust this value to your preference */
+}
     /* BACKGROUND */
     
     .container::before {
@@ -426,7 +432,7 @@
         <div class="col align-items-center flex-col">
             <div class="text sign-in">
                 <h2>
-                    Academy of Legends
+                    <img src="{% static 'images/AOL.jpg' %}" alt="">
                 </h2>
 
             </div>
