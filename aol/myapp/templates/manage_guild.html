@@ -1,0 +1,26 @@
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Guild: {{ guild.name }}</h2>
+    <p>{{ guild.description }}</p>
+    <p>Members: {{ guild.members|length }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <label for="amount">Amount</label>
+            <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter amount" required>
+        </div>
+        <button type="submit" name="action" value="add_gold" class="btn btn-success">Add Gold to All Members</button>
+        <button type="submit" name="action" value="remove_hearts" class="btn btn-warning">Remove Hearts from All Members</button>
+    </form>
+
+    <hr>
+    <h4>Guild Members</h4>
+    <ul>
+        {% for member in members %}
+        <li>{{ member.username }} - Gold: {{ member.gold }} | Hearts: {{ member.hp }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

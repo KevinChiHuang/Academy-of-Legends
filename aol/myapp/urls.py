@@ -28,5 +28,10 @@ urlpatterns = [
     path('remove-reward/<str:reward_id>/', views.remove_reward, name='remove_reward'),
     path('delete-item/<str:student_id>/<str:item_id>/', views.delete_item, name='delete_item'),
 
+    path('guilds/', views.guild_admin, name='guild_admin'),
+    path('guilds/create/', views.create_guild, name='create_guild'),
+    path('guilds/manage/<str:guild_id>/', views.manage_guild, name='manage_guild'),
+    path('guilds/delete/<str:guild_id>/', views.delete_guild, name='delete_guild'),
+
 
 ]

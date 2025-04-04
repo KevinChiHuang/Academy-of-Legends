@@ -1,0 +1,27 @@
+{% block content %}
+<div class="container">
+    <h2>Guild Management</h2>
+    <a href="{% url 'create_guild' %}" class="btn btn-primary mb-3">Create New Guild</a>
+    
+    <div class="row">
+        {% for guild in guilds %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ guild.name }}</h5>
+                    <p class="card-text">{{ guild.description }}</p>
+                    <p>Members: {{ guild.members|length }}</p>
+                    <a href="{% url 'manage_guild' guild.id %}" class="btn btn-sm btn-primary">
+                        Manage Guild
+                    </a>
+                    <a href="{% url 'delete_guild' guild.id %}" class="btn btn-sm btn-danger" 
+                       onclick="return confirm('Are you sure you want to delete this guild?');">
+                        Delete Guild
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

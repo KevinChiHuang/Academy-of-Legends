@@ -12,7 +12,8 @@ client = MongoClient('mongodb+srv://User:snoopy123@aol.5fchw.mongodb.net/?retryW
 db = client['Capstone']
 users_collection = db['users']
 rewards_collection = db['rewards']
-fs = gridfs.GridFS(db) 
+fs = gridfs.GridFS(db)
+guilds_collection = db['guilds']
 
 def register(request):
     if request.method == 'POST':
@@ -523,3 +524,101 @@ def final_migration(request):
         )
     
     return HttpResponse(f"Final migration completed. Updated {updated} items.")
+
+def guild_admin(request):
+    if not request.session.get('is_admin'):
+        return redirect('login')
+    
+    guilds = list(guilds_collection.find())
+    # Convert MongoDB _id to string and rename
+    processed_guilds = []
+    for guild in guilds:
+        guild_data = {
+            'id': str(guild['_id']),  # Convert ObjectId to string
+            'name': guild.get('name', ''),
+            'description': guild.get('description', ''),
+            'members': guild.get('members', []),
+            'created_at': guild.get('created_at', '')
+        }
+        processed_guilds.append(guild_data)
+    
+    return render(request, 'guild_admin.html', {
+        'guilds': processed_guilds,
+        'is_admin': True
+    })
+
+def create_guild(request):
+    if not request.session.get('is_admin'):
+        return redirect('login')
+    
+    if request.method == 'POST':
+        member_ids = request.POST.getlist('members')
+        # Convert each non-empty member id to an ObjectId
+        members = [ObjectId(member_id) for member_id in member_ids if member_id]
+        guild_data = {
+            'name': request.POST.get('name'),
+            'description': request.POST.get('description'),
+            'members': members,
+
+        }
+        guilds_collection.insert_one(guild_data)
+        return redirect('guild_admin')
+    
+    # Get non-admin students and set an 'id' key with the string version of _id.
+    students = list(users_collection.find({'is_admin': False}))
+    for student in students:
+        student['id'] = str(student['_id'])
+    
+    return render(request, 'create_guild.html', {'students': students})
+
+def manage_guild(request, guild_id):
+    if not request.session.get('is_admin'):
+        return redirect('login')
+    
+    guild = guilds_collection.find_one({'_id': ObjectId(guild_id)})
+    members = users_collection.find({'_id': {'$in': guild.get('members', [])}})
+    
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        amount_str = request.POST.get('amount', '0').strip()
+        try:
+            amount = int(amount_str) if amount_str else 0
+        except ValueError:
+            amount = 0
+        
+        if action == 'add_gold':
+            users_collection.update_many(
+                {'_id': {'$in': guild.get('members', [])}},
+                {'$inc': {'gold': amount}}
+            )
+            messages.success(request, f"Added {amount} gold to all guild members.")
+        elif action == 'remove_hearts':
+            users_collection.update_many(
+                {'_id': {'$in': guild.get('members', [])}},
+                {'$inc': {'hp': -amount}}
+            )
+            messages.success(request, f"Removed {amount} hearts from all guild members.")
+        
+        return redirect('manage_guild', guild_id=guild_id)
+    
+    return render(request, 'manage_guild.html', {
+        'guild': guild,
+        'members': members,
+        'is_admin': True
+    })
+
+
+def delete_guild(request, guild_id):
+    if not request.session.get('is_admin'):
+        return redirect('login')
+    
+    try:
+        result = guilds_collection.delete_one({'_id': ObjectId(guild_id)})
+        if result.deleted_count > 0:
+            messages.success(request, "Guild deleted successfully!")
+        else:
+            messages.error(request, "Guild not found or could not be deleted.")
+    except Exception as e:
+        messages.error(request, f"Error deleting guild: {str(e)}")
+    
+    return redirect('guild_admin')
