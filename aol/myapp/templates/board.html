@@ -40,7 +40,7 @@
 }
     .divider { width: 100%; height: 1px; background: #eee; margin: 16px 0; }
     .main-content {
-      width: 83%;
+      width: 100%;
       background: white;
       padding: 0 1px;
       flex-grow: 1;
@@ -63,7 +63,7 @@
     margin: 0 auto;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
     overflow: hidden;
     padding: 20px;
     position: sticky; /* Makes it sticky */
@@ -172,10 +172,12 @@
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Shop</span>
           </a>
+          {% if is_admin %}
           <a href="{% url 'admin' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Edit Students</span>
           </a>
+          {% endif %}
           {% if is_admin %}
           <a href="{% url 'add' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>

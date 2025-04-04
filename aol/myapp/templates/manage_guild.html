@@ -26,11 +26,11 @@ body {
       gap: 20px;
     }
     .guild-card {
-  border: 2px solid black;
+
   border-radius: 8px;
   padding: 20px;
   background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
   transition: box-shadow 0.3s ease;
 }
 
@@ -89,7 +89,7 @@ body {
     }
     
     .main-content {
-      width: 83%;
+      width: 100%;
       background: white;
       padding: 0 1px;
       flex-grow: 1;
@@ -154,8 +154,7 @@ body {
         background: #ffffff;
         padding: 20px;
         border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        border: 2px solid black;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
       }
       
       h1 {
@@ -335,10 +334,12 @@ body {
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Shop</span>
         </a>
+        {% if is_admin %}
         <a href="{% url 'admin' %}" class="nav-item nav-item-active">
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text">Edit Students</span>
         </a>
+        {% endif %}
         {% if is_admin %}
         <a href="{% url 'add' %}" class="nav-item nav-item-active">
           <span class="nav-icon" aria-hidden="true"></span>

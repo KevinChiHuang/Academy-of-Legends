@@ -79,7 +79,7 @@
     }
 
     .main-content {
-      width: 83%;
+      width: 100%;
       background: white;
       padding: 0 1px;
       flex-grow: 1;
@@ -168,7 +168,7 @@
     .product-card {
       background-color: #fff;
       border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
       overflow: hidden;
       width: 300px;
       text-align: center;
@@ -277,10 +277,12 @@
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Shop</span>
           </a>
+          {% if is_admin %}
           <a href="{% url 'admin' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Edit Students</span>
           </a>
+          {% endif %}
           {% if is_admin %}
           <a href="{% url 'add' %}" class="nav-item nav-item-active">
             <span class="nav-icon" aria-hidden="true"></span>
