@@ -8,7 +8,10 @@
       font: poppins;
     }
     .page-content {
-  padding: 20px; /* Space around the page content */
+  padding: 20px; 
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.55);
+  border-radius: 25px; */
+  
 }
 
 
@@ -19,7 +22,7 @@
           
     .ag-courses_box {
   display: grid;                /* Use grid layout */
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Automatically create columns based on available space */
+  grid-template-columns: repeat(4, 1fr); /* Automatically create columns based on available space */
   gap: 20px;                    /* Space between the items */
   padding: 50px 0;
 }
@@ -32,18 +35,19 @@
     }
       .inv{
         
-        background: rgba(255, 255, 255, 0.813);
+        background: rgb(255, 255, 255);
         border-radius: 25px;
         margin:  10px 10px 20px;
         padding: 5px;
         text-align: center;
-        
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.55);
+        margin-top: 20px;
       }
 
       .inv1{
         display: grid;                /* Use grid layout */
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Automatically create columns based on available space */
-  gap: 20px;                    /* Space between the items */
+        grid-template-columns: repeat(4, 1fr);; /* Automatically create columns based on available space */
+  gap: even;                    /* Space between the items */
   padding: 10px 0;
         
       }
@@ -53,15 +57,18 @@
       margin: 0 10px 20px;   
       border-radius: 28px;    
       overflow: hidden; 
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.55);
+      border-radius: 25px;
 }
       .ag-courses-item_link {
         display: block;
         padding: 30px 20px;
-        background-color: #487fffda;
+        background-color: #487fffdc;
         
         overflow: hidden;
       
         position: relative;
+        
       }
       .ag-courses-item_link1 {
         display: block;
@@ -157,11 +164,6 @@
         }
       }
       
-
-
-    html {
-      font-family: Geneva, Verdana, sans-serif;
-    }
     
     .dashboard-container {
       background: #fff;
@@ -274,20 +276,27 @@
     
     .page-title {
       font: 700 32px;
-
+      border-top-left-radius: 25px;
+      border-top-right-radius: 25px;
       text-align: center;
-      font-weight: bold;
       background: rgba(255, 255, 255, 0.813);
+      margin-bottom: 25px;
+      margin-top: 25px;
       
     }
     
     .stats-grid {
-      background: url("{% static 'images/castle.jpg' %}") no-repeat center center;
-      background-size: cover;
-      border-radius: 25px;
-      min-height: 60vh; /* Ensure it covers the full screen */
-
-    }
+  background: url("{% static 'images/castle1.jpg' %}") no-repeat center 15%; /* <- changed 'center center' to 'top center' */
+  background-size: cover;
+  border-radius: 25px;
+  min-height: 40vh;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  flex-direction: column;
+}
 
 
     .stats-container {
@@ -426,11 +435,11 @@
           </div>
           
 
+          <h1 class="page-title">{{ username }}'s Dashboard</h1>
           <div class="page-content">
             <section class="stats-grid">
               <div class="stats-container">
                 <div class="ag-format-container">
-                  <h2 class="page-title">{{ username }}'s Dashboard</h2>
                     <div class="ag-courses_box">
                       <div class="ag-courses_item">
                         <a href="#" class="ag-courses-item_link">
@@ -497,7 +506,7 @@
                         </a>
                       </div>
                     </div>
-                    <div class="inv">
+                    <!-- <div class="inv">
                       <h2 class="events-title">Inventory</h2>
                       <div class="inv1">
                       {% for item in inventory %}
@@ -508,9 +517,22 @@
                         </div>
                       </div>
                     {% endfor %} 
-                  </div>     
+                  </div>      -->
                     </div>
+                    
             </section>
+            <div class="inv">
+              <h2 class="events-title">Inventory</h2>
+              <div class="inv1">
+              {% for item in inventory %}
+              <div class="ag-courses_item1">
+                <div class="ag-courses-item_link1">
+                  <div class="ag-courses-item_title">{{ item.item }}</div>
+      
+                </div>
+              </div>
+            {% endfor %} 
+          </div>     
           </div>
         </main>
       </div>
