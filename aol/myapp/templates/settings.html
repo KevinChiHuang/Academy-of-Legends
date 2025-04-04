@@ -417,7 +417,7 @@
                                                             <p class="card-text">{{ item.description }}</p>
                                                             <div class="d-flex justify-content-between">
                                                                 <small class="text-muted">
-                                                                    Purchased: {{ item.purchase_date|date:"M d, Y" }}
+                                                                    Delete: {{ item.purchase_date|date:"M d, Y" }}
                                                                 </small>
                                                                 <button class="btn btn-danger btn-sm" 
                                                                         onclick="deleteItem('{{ student.id }}', '{{ item.id }}')">
