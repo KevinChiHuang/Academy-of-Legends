@@ -4,48 +4,61 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
   <style>
-    .ag-format-container {
-        width: 1500px;
-        margin: 0 auto;
-      }
-      
+    *{
+      font: poppins;
+    }
+    .page-content {
+  padding: 20px; /* Space around the page content */
+}
 
-      .ag-courses_box {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-align: start;
-        -ms-flex-align: start;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        padding: 50px 0;
+
+    .ag-format-container {
+      width: 1500px;
+      margin: 0 auto;
+    }
+          
+    .ag-courses_box {
+  display: grid;                /* Use grid layout */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Automatically create columns based on available space */
+  gap: 20px;                    /* Space between the items */
+  padding: 50px 0;
+}
+
+    .ag-courses_item {
+      flex-basis: calc(33.33% - 20px);
+      margin: 0 10px 20px;   
+      border-radius: 28px;    
+      overflow: hidden;     
+    }
+      .inv{
+        
+        background: rgba(255, 255, 255, 0.813);
+        border-radius: 25px;
+        margin:  10px 10px 20px;
+        padding: 5px;
+        text-align: center;
+        
       }
-      .ag-courses_item {
-        -ms-flex-preferred-size: calc(25% - 30px);
-        flex-basis: calc(25% - 30px);
-      
-        margin: 0 30px 30px;
-      
-        overflow: hidden;
-      
-        border-radius: 28px;
+
+      .inv1{
+        display: grid;                /* Use grid layout */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Automatically create columns based on available space */
+  gap: 20px;                    /* Space between the items */
+  padding: 10px 0;
+        
       }
 
       .ag-courses_item1 {
-        -ms-flex-preferred-size: calc(15% - 30px);
-        flex-basis: calc(15% - 30px);
-      
-        margin: 0 30px 30px;
-      
-        overflow: hidden;
-      
-        border-radius: 28px;
-      }
+        flex-basis: calc(33.33% - 20px);
+      margin: 0 10px 20px;   
+      border-radius: 28px;    
+      overflow: hidden; 
+}
       .ag-courses-item_link {
         display: block;
         padding: 30px 20px;
-        background-color: #4880ff;
-      
+        background-color: #487fffda;
+        
         overflow: hidden;
       
         position: relative;
@@ -53,8 +66,8 @@
       .ag-courses-item_link1 {
         display: block;
         padding: 30px 20px;
-        background-color: #8548ff;
-      
+        background-color: #4cc593da;
+        
         overflow: hidden;
       
         position: relative;
@@ -153,6 +166,7 @@
     .dashboard-container {
       background: #fff;
       overflow: hidden;
+      padding: 20px;
     }
     
     .layout-wrapper {
@@ -175,38 +189,27 @@
       margin-top: 20px;
     }
     
-    .nav-item {
-      display: flex;
-      padding: 13px 40px;
-    }
-    
-    .nav-item-active {
-      background: #4880ff;
-      color: #fff;
-      border-radius: 25px;
-      margin-left: 20px;
-      margin-bottom: 20px;
-    }
-    
-    .nav-icon {
-      text-align: center;
-      font: 500 22px LineAwesome, sans-serif;
-    }
-    
-    .nav-text {
-      letter-spacing: 0.3px;
-      font: 600 14px Nunito Sans, sans-serif;
-      
-      margin-inline: auto;
-      
-    }
+    .nav-links {
+  display: flex;
+  gap: 20px; /* Adds spacing between links */
+  justify-content: center;
+  background-color: white;
+  font-size:x-large;
+}
 
-    .nav-text-Settings {
-      letter-spacing: 0.3px;
-      font: 600 14px Nunito Sans, sans-serif;
-      text-align: center;
-      
-    }
+.nav-item {
+  display: flex;
+  align-items: center; /* Aligns icon and text */
+  padding: 10px 15px;
+  color: rgb(20, 233, 158);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-item:hover {
+  background-color: rgba(20, 233, 159, 0.65);
+}
     
     .divider {
       width: 100%;
@@ -223,17 +226,19 @@
     
     .main-content {
       width: 83%;
-      background: #f5f6fa;
+      background: white;
       padding: 0 1px;
+      flex-grow: 1;
     }
     
     .top-bar {
       background: #fff;
       padding: 13px 31px;
       display: flex;
-      justify-content: right;
+      justify-content: center;
       align-items: center;
     }
+
     
     .user-profile {
       display: flex;
@@ -254,7 +259,7 @@
     
     .user-name {
       color: #404040;
-      font: 700 14px Nunito Sans, sans-serif;
+      text-align: center;
     }
     
     .user-role {
@@ -268,24 +273,39 @@
     }
     
     .page-title {
-      color: #202224;
-      letter-spacing: -0.11px;
-      font: 700 32px Nunito Sans, sans-serif;
-      margin: 27px 0;
+      font: 700 32px;
+
+      text-align: center;
+      font-weight: bold;
+      background: rgba(255, 255, 255, 0.813);
+      
     }
     
     .stats-grid {
       background: url("{% static 'images/castle.jpg' %}") no-repeat center center;
       background-size: cover;
-      min-height: 75vh; /* Ensure it covers the full screen */
+      border-radius: 25px;
+      min-height: 60vh; /* Ensure it covers the full screen */
 
     }
-    
+
+
+    .stats-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px; /* Adds spacing between items */
+        justify-content: center;
+    }
+
     .stat-card {
-      background: #fff;
-      border-radius: 8px;
-      padding: 24px;
-      height: 200px;
+        width: 150px; /* Adjust width as needed */
+        min-height: 100px;
+        padding: 16px;
+        border-radius: 8px;
+        background: #f5f5f5;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        font-weight: bold;
     }
     
     .date-picker {
@@ -305,9 +325,10 @@
     }
     
     .events-title {
-      color: #202224;
-      font: 700 24px Nunito Sans, sans-serif;
+      font: 700 24px;
       text-align: center;
+      /* color: white; */
+
     }
     
     .events-container {
@@ -341,6 +362,7 @@
       
       .nav-item {
         padding: 13px 20px;
+
       }
     }
     </style>
@@ -348,61 +370,47 @@
     <div class="dashboard-container">
 
       <div class="layout-wrapper">
-        <nav class="sidebar">
-          <h1 class="logo">Academy of Legends</h1>
-          
-          <a href="{% url 'home' %}" class="nav-item nav-item-active">
-            <span class="nav-icon" aria-hidden="true"></span>
-            <span class="nav-text">Dashboard</span>
-          </a>
-          <a href="{% url 'board' %}" class="nav-item nav-item-active">
-            <span class="nav-icon" aria-hidden="true"></span>
-            <span class="nav-text">Legends Board</span>
-          </a>
-          <a href="{% url 'shop' %}" class="nav-item nav-item-active">
-            <span class="nav-icon" aria-hidden="true"></span>
-            <span class="nav-text">Shop</span>
-          </a>
-
-          {% if is_admin %}
-          <a href="{% url 'admin' %}" class="nav-item nav-item-active">
-            <span class="nav-icon" aria-hidden="true"></span>
-            <span class="nav-text">Edit Students</span>
-          </a>
-          {% endif %}
-          {% if is_admin %}
-          <a href="{% url 'add' %}" class="nav-item nav-item-active">
-            <span class="nav-icon" aria-hidden="true"></span>
-            <span class="nav-text">Add rewards</span>
-          </a>
-          {% endif %}
-    
-          <div class="divider"></div>
-          
-          <a href="{% url 'logout' %}" class="nav-item">
-            <span class="nav-icon" aria-hidden="true"></span>
-            <span class="nav-text-settings">Logout</span>
-          </a>
-        
-        </nav>
     
         <main class="main-content">
           <header class="top-bar">
-            <div class="user-profile">
-              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff91569b03a1f3ea05d264f6177a7ab0e8c181fb9d7738db11cfba2674e7bce0?placeholderIfAbsent=true" alt="Profile Photo" class="user-avatar">
-              <div class="user-info">
-                <span class="user-name">{{ username }}</span>
-              </div>
-              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/625982aaef443be514e593110a93b4aff54e04cb38162e48faefa1086a49abca?placeholderIfAbsent=true" alt="" class="dropdown-icon">
-            </div>
+            <img src="{% static 'images/AOL.jpg' %}" alt="">
           </header>
-    
+          
+          <div class="nav-links">
+            <a href="{% url 'home' %}" class="nav-item">
+              <span class="nav-icon"></span>
+              <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="{% url 'board' %}" class="nav-item">
+              <span class="nav-icon"></span>
+              <span class="nav-text">Legends Board</span>
+            </a>
+            <a href="{% url 'shop' %}" class="nav-item">
+              <span class="nav-icon"></span>
+              <span class="nav-text">Shop</span>
+            </a>
+            {% if is_admin %}
+            <a href="{% url 'admin' %}" class="nav-item">
+              <span class="nav-icon"></span>
+              <span class="nav-text">Edit Students</span>
+            </a>
+            <a href="{% url 'add' %}" class="nav-item">
+              <span class="nav-icon"></span>
+              <span class="nav-text">Add Rewards</span>
+            </a>
+            {% endif %}
+            <a href="{% url 'logout' %}" class="nav-item">
+              <span class="nav-icon"></span>
+              <span class="nav-text">Logout</span>
+            </a>
+          </div>
+          
+
           <div class="page-content">
-            <h1 class="page-title">Dashboard</h1>
-    
             <section class="stats-grid">
-              
+              <div class="stats-container">
                 <div class="ag-format-container">
+                  <h2 class="page-title">{{ username }}'s Dashboard</h2>
                     <div class="ag-courses_box">
                       <div class="ag-courses_item">
                         <a href="#" class="ag-courses-item_link">
@@ -468,32 +476,21 @@
                           </div>
                         </a>
                       </div>
-            </section>
-
-            <section class="events-section">
-              <h2 class="events-title">Your Inventory</h2>
-              <div class="ag-format-container">
-                <div class="ag-courses_box">
-            
-                  {% for item in inventory %}
-                    <div class="ag-courses_item1">
-                      <div class="ag-courses-item_link1">
-                        <div class="ag-courses-item_title">{{ item.item }}</div>
-            
-                      </div>
                     </div>
-                  {% endfor %}
-            
-                </div>
-              </div>
+                    <div class="inv">
+                      <h2 class="events-title">Inventory</h2>
+                      <div class="inv1">
+                      {% for item in inventory %}
+                      <div class="ag-courses_item1">
+                        <div class="ag-courses-item_link1">
+                          <div class="ag-courses-item_title">{{ item.item }}</div>
+              
+                        </div>
+                      </div>
+                    {% endfor %} 
+                  </div>     
+                    </div>
             </section>
-            
-            
-
-          <!-- <section class="events-section">
-              <h2 class="events-title">Events</h2>
-              <div class="events-container"></div>
-          </section> -->
           </div>
         </main>
       </div>

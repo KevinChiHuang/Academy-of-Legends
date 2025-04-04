@@ -331,12 +331,16 @@ def buy_reward(request, reward_id):
     new_gold = user_gold - reward_price
     users_collection.update_one(
         {'_id': ObjectId(user_id)},
-        {'$push': {'inventory': {
-            'item_id': str(reward['_id']),  # Store reward ID
-            'item': reward['item'],
-            'description': reward.get('description', ''),
-            'image_id': str(reward.get('image_id', ''))
-        }}}
+        {
+            '$push': {'inventory': {
+                'item_id': str(reward['_id']),  # Store reward ID
+                'item': reward['item'],
+                'description': reward.get('description', ''),
+                'image_id': str(reward.get('image_id', ''))
+                }
+            },
+            '$set': {'gold': new_gold}
+        }
     )
 
     messages.success(request, f"You have successfully purchased {reward['item']}!")

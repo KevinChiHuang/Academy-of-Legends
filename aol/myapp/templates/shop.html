@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <link
@@ -8,13 +9,18 @@
   />
 
   <style>
-    html {
-      font-family: Geneva, Verdana, sans-serif;
+        *{
+      font: poppins;
     }
+    .page-content {
+  padding: 20px; /* Space around the page content */
+}
+
     
     .dashboard-container {
       background: #fff;
       overflow: hidden;
+      padding: 20px;
     }
 
     .layout-wrapper {
@@ -32,41 +38,32 @@
     .logo {
       color: #4880ff;
       text-align: center;
-      font: 800 20px Nunito Sans, sans-serif;
+      font: 800 20px;
       margin-bottom: 50px;
       margin-top: 20px;
     }
 
-    .nav-item {
-      display: flex;
-      padding: 13px 40px;
-    }
+    .nav-links {
+  display: flex;
+  gap: 20px; /* Adds spacing between links */
+  justify-content: center;
+  background-color: white;
+  font-size:x-large;
+}
 
-    .nav-item-active {
-      background: #4880ff;
-      color: #fff;
-      border-radius: 25px;
-      margin-left: 20px;
-      margin-bottom: 20px;
-    }
+.nav-item {
+  display: flex;
+  align-items: center; /* Aligns icon and text */
+  padding: 10px 15px;
+  color: rgb(20, 233, 158);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
 
-    .nav-icon {
-      text-align: center;
-      font: 500 22px LineAwesome, sans-serif;
-    }
-
-    .nav-text {
-      letter-spacing: 0.3px;
-      font: 600 14px Nunito Sans, sans-serif;
-
-      margin-inline: auto;
-    }
-
-    .nav-text-Settings {
-      letter-spacing: 0.3px;
-      font: 600 14px Nunito Sans, sans-serif;
-      text-align: center;
-    }
+.nav-item:hover {
+  background-color: rgba(20, 233, 159, 0.65);
+}
 
     .divider {
       width: 100%;
@@ -78,20 +75,21 @@
     .section-title {
       letter-spacing: 0.26px;
       margin: 16px 0 0 40px;
-      font: 700 12px Nunito Sans, sans-serif;
+      font: 700 12px;
     }
 
     .main-content {
       width: 83%;
-      background: #f5f6fa;
+      background: white;
       padding: 0 1px;
+      flex-grow: 1;
     }
 
     .top-bar {
       background: #fff;
       padding: 13px 31px;
       display: flex;
-      justify-content: right;
+      justify-content: center;
       align-items: center;
     }
 
@@ -114,12 +112,12 @@
 
     .user-name {
       color: #404040;
-      font: 700 14px Nunito Sans, sans-serif;
+      font: 700 14px ;
     }
 
     .user-role {
       color: #565656;
-      font: 600 12px Nunito Sans, sans-serif;
+      font: 600 12px ;
     }
 
     .dropdown-icon {
@@ -130,11 +128,19 @@
     .page-title {
       color: #202224;
       letter-spacing: -0.11px;
-      font: 700 32px Nunito Sans, sans-serif;
+      font: 700 32px ;
       margin: 27px 0;
+      text-align: center;
+    }
+
+    .page-title2 {
+      color: #8d8d00;
+      letter-spacing: -0.11px;
+      font: 700 32px ;
+      margin: 27px 0;
+      text-align: center;
     }
     body {
-      font-family: Arial, sans-serif;
       background-color: #f5f9f8;
       margin: 0;
     }
@@ -249,7 +255,7 @@
 
   <div class="dashboard-container">
     <div class="layout-wrapper">
-      <nav class="sidebar">
+      <!-- <nav class="sidebar">
         <h1 class="logo">Academy of Legends</h1>
         
         {% if not is_admin %}
@@ -295,21 +301,48 @@
           <span class="nav-icon" aria-hidden="true"></span>
           <span class="nav-text-settings">Logout</span>
         </a>
-      </nav>
+      </nav> -->
 
       <main class="main-content">
         <header class="top-bar">
-          <div class="user-profile">
-            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff91569b03a1f3ea05d264f6177a7ab0e8c181fb9d7738db11cfba2674e7bce0?placeholderIfAbsent=true" alt="Profile Photo" class="user-avatar">
-            <div class="user-info">
-              <span class="user-name">{{ username }}</span>
-            </div>
-            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/625982aaef443be514e593110a93b4aff54e04cb38162e48faefa1086a49abca?placeholderIfAbsent=true" alt="" class="dropdown-icon">
-          </div>
+          <img src="{% static 'images/AOL.jpg' %}" alt="">
         </header>
+        
+        <div class="nav-links">
+          {% if not is_admin %}
+          <a href="{% url 'home' %}" class="nav-item">
+            <span class="nav-icon"></span>
+            <span class="nav-text">Dashboard</span>
+          </a>
+          {% endif %}
+          <a href="{% url 'board' %}" class="nav-item">
+            <span class="nav-icon"></span>
+            <span class="nav-text">Legends Board</span>
+          </a>
+          <a href="{% url 'shop' %}" class="nav-item">
+            <span class="nav-icon"></span>
+            <span class="nav-text">Shop</span>
+          </a>
+          {% if is_admin %}
+          <a href="{% url 'admin' %}" class="nav-item">
+            <span class="nav-icon"></span>
+            <span class="nav-text">Edit Students</span>
+          </a>
+          <a href="{% url 'add' %}" class="nav-item">
+            <span class="nav-icon"></span>
+            <span class="nav-text">Add Rewards</span>
+          </a>
+          {% endif %}
+          <a href="{% url 'logout' %}" class="nav-item">
+            <span class="nav-icon"></span>
+            <span class="nav-text">Logout</span>
+          </a>
+        </div>
         <div class="page-content">
           <h1 class="page-title">Reward Shop</h1>
-          <h1 class="page-title">Current Gold: {{ gold }}</h1>
+          {% if not is_admin %}
+          <h2 class="page-title2">Gold: {{ gold }}</h2>
+          {% endif %}
           <div class="container">
             <div class="product-grid">
               {% for reward in rewards %}
