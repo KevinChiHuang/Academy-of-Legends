@@ -569,7 +569,7 @@ def create_guild(request):
     for student in students:
         student['id'] = str(student['_id'])
     
-    return render(request, 'create_guild.html', {'students': students})
+    return render(request, 'create_guild.html', {'students': students, 'is_admin': True}, )
 
 def manage_guild(request, guild_id):
     if not request.session.get('is_admin'):

@@ -150,44 +150,6 @@
 </head>
 <body>
   <div class="dashboard-container">
-      <!-- <nav class="sidebar">
-        <h1 class="logo">Academy of Legends</h1>
-        {% if not is_admin %}
-        <a href="{% url 'home' %}" class="nav-item nav-item-active">
-          <span class="nav-icon" aria-hidden="true"></span>
-          <span class="nav-text">Dashboard</span>
-        </a>
-        {% endif %}
-        <a href="{% url 'board' %}" class="nav-item nav-item-active">
-          <span class="nav-text">Legends Board</span>
-        </a>
-        <a href="{% url 'shop' %}" class="nav-item nav-item-active">
-          <span class="nav-text">Shop</span>
-        </a>
-        {% if is_admin %}
-        <a href="{% url 'admin' %}" class="nav-item nav-item-active">
-          <span class="nav-icon" aria-hidden="true"></span>
-          <span class="nav-text">Edit Students</span>
-        </a>
-        {% endif %}
-        {% if is_admin %}
-        <a href="{% url 'add' %}" class="nav-item nav-item-active">
-          <span class="nav-icon" aria-hidden="true"></span>
-          <span class="nav-text">Add rewards</span>
-        </a>
-        {% endif %}
-        <div class="divider"></div>
-        {% if is_admin %}
-        <a class="nav-item">
-          <span class="nav-icon" aria-hidden="true"></span>
-          <span class="nav-text-Settings">Settings</span>
-        </a>
-        {% endif %}
-        <a href="{% url 'logout' %}" class="nav-item">
-          <span class="nav-icon" aria-hidden="true"></span>
-          <span class="nav-text-settings">Logout</span>
-        </a>
-      </nav> -->
   
       <main class="main-content">
         <header class="top-bar">
@@ -196,32 +158,47 @@
         
         <div class="nav-links">
           {% if not is_admin %}
-          <a href="{% url 'home' %}" class="nav-item">
-            <span class="nav-icon"></span>
+          <a href="{% url 'home' %}" class="nav-item nav-item-active">
+            <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Dashboard</span>
           </a>
           {% endif %}
-          <a href="{% url 'board' %}" class="nav-item">
-            <span class="nav-icon"></span>
+          
+          <a href="{% url 'board' %}" class="nav-item nav-item-active">
+            <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Legends Board</span>
           </a>
-          <a href="{% url 'shop' %}" class="nav-item">
-            <span class="nav-icon"></span>
+          <a href="{% url 'shop' %}" class="nav-item nav-item-active">
+            <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Shop</span>
           </a>
-          {% if is_admin %}
-          <a href="{% url 'admin' %}" class="nav-item">
-            <span class="nav-icon"></span>
+          <a href="{% url 'admin' %}" class="nav-item nav-item-active">
+            <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Edit Students</span>
           </a>
-          <a href="{% url 'add' %}" class="nav-item">
-            <span class="nav-icon"></span>
+          {% if is_admin %}
+          <a href="{% url 'add' %}" class="nav-item nav-item-active">
+            <span class="nav-icon" aria-hidden="true"></span>
             <span class="nav-text">Add Rewards</span>
           </a>
           {% endif %}
+
+          {% if is_admin %}
+          <a href="{% url 'create_guild' %}" class="nav-item nav-item-active">
+            <span class="nav-icon" aria-hidden="true"></span>
+            <span class="nav-text">Create Guild</span>
+          </a>
+          {% endif %}
+
+          {% if is_admin %}
+          <a href="{% url 'guild_admin' %}" class="nav-item nav-item-active">
+            <span class="nav-icon" aria-hidden="true"></span>
+            <span class="nav-text">Manage Guilds</span>
+          </a>
+          {% endif %}
           <a href="{% url 'logout' %}" class="nav-item">
-            <span class="nav-icon"></span>
-            <span class="nav-text">Logout</span>
+            <span class="nav-icon" aria-hidden="true"></span>
+            <span class="nav-text-settings">Logout</span>
           </a>
         </div>
   

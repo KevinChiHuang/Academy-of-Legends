@@ -310,6 +310,7 @@
               <span class="nav-text">Dashboard</span>
             </a>
             {% endif %}
+            
             <a href="{% url 'board' %}" class="nav-item nav-item-active">
               <span class="nav-icon" aria-hidden="true"></span>
               <span class="nav-text">Legends Board</span>
@@ -325,11 +326,26 @@
             {% if is_admin %}
             <a href="{% url 'add' %}" class="nav-item nav-item-active">
               <span class="nav-icon" aria-hidden="true"></span>
-              <span class="nav-text">Add rewards</span>
+              <span class="nav-text">Add Rewards</span>
             </a>
             {% endif %}
-      
-          
+
+            {% if is_admin %}
+            <a href="{% url 'create_guild' %}" class="nav-item nav-item-active">
+              <span class="nav-icon" aria-hidden="true"></span>
+              <span class="nav-text">Create Guild</span>
+            </a>
+            {% endif %}
+
+            {% if is_admin %}
+            <a href="{% url 'guild_admin' %}" class="nav-item nav-item-active">
+              <span class="nav-icon" aria-hidden="true"></span>
+              <span class="nav-text">Manage Guilds</span>
+            </a>
+            {% endif %}
+
+
+
             <!-- <a class="nav-item">
               <span class="nav-icon" aria-hidden="true"></span>
               <span class="nav-text-Settings">Settings</span>
@@ -368,11 +384,11 @@
                         <td class="gold">{{ student.gold }}</td>
                         <td class="hp">{{ student.hp }}</td>
                         <td>
-                          <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'gold', 'add')">+ Gold</button>
-                          <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'gold', 'minus')">- Gold</button>
-                          <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'hp', 'add')">+ Heart</button>
-                          <button class="quick-action-btn" onclick="updateValue('{{ student.id }}', 'hp', 'minus')">- Heart</button>
+                          <button class="quick-action-btn btn" style="background-color: rgb(115, 128, 0); color: white; border: none;" onclick="updateValue('{{ student.id }}', 'gold', 'add')">+ Gold</button>
+                          <button class="quick-action-btn btn" style="background-color: green; color: white; border: none;" onclick="updateValue('{{ student.id }}', 'hp', 'add')">+ Heart</button>
+                          <button class="quick-action-btn btn" style="background-color: rgb(118, 18, 18); color: white; border: none;" onclick="updateValue('{{ student.id }}', 'hp', 'minus')">- Heart</button>
                         </td>
+                        
                         <td>
                           <a href="{% url 'edit_student' student.id %}" class="edit-btn">✏️</a>
                           
