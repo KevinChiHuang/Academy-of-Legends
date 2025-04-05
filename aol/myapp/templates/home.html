@@ -11,6 +11,8 @@
   padding: 20px; 
   /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.55);
   border-radius: 25px; */
+  max-width: 100%;
+  overflow: hidden;
   
 }
 
@@ -21,18 +23,21 @@
     }
           
     .ag-courses_box {
-  display: grid;                /* Use grid layout */
-  grid-template-columns: repeat(4, 1fr); /* Automatically create columns based on available space */
-  gap: 20px;                    /* Space between the items */
-  padding: 50px 0;
+      display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next line if there's not enough space */
+  gap: 20px; /* Space between items */
+  padding: 20px 0;
+  width: 100%; /* Ensure it stays within the parent container */
+  box-sizing: border-box;
 }
 
-    .ag-courses_item {
-      flex-basis: calc(33.33% - 20px);
-      margin: 0 10px 20px;   
-      border-radius: 28px;    
-      overflow: hidden;     
-    }
+.ag-courses_item {
+  flex: 1 1 22%; /* Allow it to grow and shrink, with a base size of 22% */
+  margin: 0 10px 20px;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.55);
+  }
       .inv{
         
         background: rgb(255, 255, 255);
@@ -60,16 +65,16 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.55);
       border-radius: 25px;
 }
-      .ag-courses-item_link {
-        display: block;
-        padding: 30px 20px;
-        background-color: #487fffdc;
-        
-        overflow: hidden;
-      
-        position: relative;
-        
-      }
+.ag-courses-item_link {
+  display: block;
+  padding: 30px 20px;
+  background-color: #487fffdc;
+  overflow: hidden;
+  position: relative;
+  color: white;
+  text-decoration: none;
+  box-sizing: border-box;
+}
       .ag-courses-item_link1 {
         display: block;
         padding: 30px 20px;
@@ -154,15 +159,17 @@
         margin-right: 10px; /* Adjust spacing */
       }
 
-      @media only screen and (max-width: 979px) {
-        .ag-courses_item {
-          -ms-flex-preferred-size: calc(50% - 30px);
-          flex-basis: calc(50% - 30px);
-        }
-        .ag-courses-item_title {
-          font-size: 24px;
-        }
-      }
+
+        @media only screen and (max-width: 979px) {
+  .ag-courses_box {
+    flex-direction: column; /* Stack items vertically on smaller screens */
+  }
+
+  .ag-courses_item {
+    flex: 1 1 100%; /* Take up full width on smaller screens */
+  }
+}
+      
       
     
     .dashboard-container {
@@ -286,25 +293,27 @@
     }
     
     .stats-grid {
-  background: url("{% static 'images/castle1.jpg' %}") no-repeat center 10%; /* <- changed 'center center' to 'top center' */
-  background-size: cover;
-  border-radius: 25px;
-  min-height: 40vh;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.55);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  flex-direction: column;
+      background: url("{% static 'images/castle1.jpg' %}") no-repeat center 10%; 
+    background-size: cover;
+    border-radius: 25px;
+    min-height: 40vh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    flex-direction: column;
+    width: 100%;
 }
 
-
-    .stats-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px; /* Adds spacing between items */
-        justify-content: center;
-    }
+.stats-container {
+  display: flex; /* Switch to flexbox for dynamic sizing */
+  flex-wrap: wrap; /* Allow wrapping */
+  gap: 16px; /* Space between items */
+  justify-content: center; /* Center the items */
+  width: 100%; /* Ensure it doesn't overflow the parent */
+  box-sizing: border-box;
+}
 
     .stat-card {
         width: 150px; /* Adjust width as needed */
@@ -346,6 +355,15 @@
       margin-top: 20px;
       
     }
+    @media (max-width: 767px) {
+  .stats-container {
+    grid-template-columns: 1fr; /* Single column for smaller screens */
+  }
+
+  .ag-courses_box {
+    grid-template-columns: 1fr; /* Single column for smaller screens */
+  }
+}
     
     @media (max-width: 991px) {
       .layout-wrapper {
@@ -377,9 +395,7 @@
     </style>
     
     <div class="dashboard-container">
-
       <div class="layout-wrapper">
-    
         <main class="main-content">
           <header class="top-bar">
             <img src="{% static 'images/AOL.jpg' %}" alt="">
@@ -392,7 +408,6 @@
               <span class="nav-text">Dashboard</span>
             </a>
             {% endif %}
-            
             <a href="{% url 'board' %}" class="nav-item nav-item-active">
               <span class="nav-icon" aria-hidden="true"></span>
               <span class="nav-text">Legends Board</span>
@@ -413,131 +428,120 @@
               <span class="nav-text">Add Rewards</span>
             </a>
             {% endif %}
-
+    
             {% if is_admin %}
             <a href="{% url 'create_guild' %}" class="nav-item nav-item-active">
               <span class="nav-icon" aria-hidden="true"></span>
               <span class="nav-text">Create Guild</span>
             </a>
             {% endif %}
-
+    
             {% if is_admin %}
             <a href="{% url 'guild_admin' %}" class="nav-item nav-item-active">
               <span class="nav-icon" aria-hidden="true"></span>
               <span class="nav-text">Manage Guilds</span>
             </a>
             {% endif %}
-
+    
             <a href="{% url 'logout' %}" class="nav-item">
               <span class="nav-icon" aria-hidden="true"></span>
               <span class="nav-text-settings">Logout</span>
             </a>
           </div>
-          
-
+    
           <h1 class="page-title">{{ username }}'s Dashboard</h1>
-          <div class="page-content">
-            <section class="stats-grid">
-              <div class="stats-container">
-                <div class="ag-format-container">
-                    <div class="ag-courses_box">
-                      <div class="ag-courses_item">
-                        <a href="#" class="ag-courses-item_link">
-                          <div class="ag-courses-item_bg"></div>
-                  
-                          <div class="ag-courses-item_title">
-                            Gold
-                          </div>
-                  
-                          <div class="ag-courses-item_date-box">
-                            Total Gold:
-                            <span class="ag-courses-item_date">
-                              {{ gold }}
-                            </span>
-                          </div>
-                        </a>
-                      </div>
-                      <div class="ag-courses_item">
-                        <a href="#" class="ag-courses-item_link">
-                          <div class="ag-courses-item_bg"></div>
-                  
-                          <div class="ag-courses-item_title">
-                            EXP
-                          </div>
-                  
-                          <div class="ag-courses-item_date-box">
-                            Total EXP:
-                            <span class="ag-courses-item_date">
-                              {{ exp }}
-                            </span>
-                          </div>
-                        </a>
-                      </div>
-                      <div class="ag-courses_item">
-                        <a href="#" class="ag-courses-item_link">
-                          <div class="ag-courses-item_bg"></div>
-                  
-                          <div class="ag-courses-item_title">
-                            HP
-                          </div>
-                  
-                          <div class="ag-courses-item_date-box">
-                            Total HP:
-                            <span class="ag-courses-item_date">
-                              {{ hp }}
-                            </span>
-                          </div>
-                        </a>
-                      </div>
-                      <div class="ag-courses_item">
-                        <a href="#" class="ag-courses-item_link">
-                          <div class="ag-courses-item_bg"></div>
-                  
-                          <div class="ag-courses-item_title">
-                            Rank
-                          </div>
-                  
-                          <div class="ag-courses-item_date-box">
-                            Placement:
-                            <span class="ag-courses-item_date">
-                              {{ rank }}
-                            </span>
-                          </div>
-                        </a>
-                      </div>
+      
+      <div class="page-content">
+        <!-- Stats Grid Section -->
+        <section class="stats-grid">
+          <div class="stats-container">
+            <div class="ag-format-container">
+              <div class="ag-courses_box">
+                <!-- Courses/Stats Items Inside the Grid -->
+                <div class="ag-courses_item">
+                  <a href="#" class="ag-courses-item_link">
+                    <div class="ag-courses-item_bg"></div>
+                    <div class="ag-courses-item_title">
+                      Gold
                     </div>
-                    <!-- <div class="inv">
-                      <h2 class="events-title">Inventory</h2>
-                      <div class="inv1">
-                      {% for item in inventory %}
-                      <div class="ag-courses_item1">
-                        <div class="ag-courses-item_link1">
-                          <div class="ag-courses-item_title">{{ item.item }}</div>
-              
-                        </div>
-                      </div>
-                    {% endfor %} 
-                  </div>      -->
+                    <div class="ag-courses-item_date-box">
+                      Total Gold:
+                      <span class="ag-courses-item_date">
+                        {{ gold }}
+                      </span>
                     </div>
-                    
-            </section>
-            <div class="inv">
-              <h2 class="events-title">Inventory</h2>
-              <div class="inv1">
-              {% for item in inventory %}
+                  </a>
+                </div>
+
+                <div class="ag-courses_item">
+                  <a href="#" class="ag-courses-item_link">
+                    <div class="ag-courses-item_bg"></div>
+                    <div class="ag-courses-item_title">
+                      EXP
+                    </div>
+                    <div class="ag-courses-item_date-box">
+                      Total EXP:
+                      <span class="ag-courses-item_date">
+                        {{ exp }}
+                      </span>
+                    </div>
+                  </a>
+                </div>
+
+                <div class="ag-courses_item">
+                  <a href="#" class="ag-courses-item_link">
+                    <div class="ag-courses-item_bg"></div>
+                    <div class="ag-courses-item_title">
+                      HP
+                    </div>
+                    <div class="ag-courses-item_date-box">
+                      Total HP:
+                      <span class="ag-courses-item_date">
+                        {{ hp }}
+                      </span>
+                    </div>
+                  </a>
+                </div>
+
+                <div class="ag-courses_item">
+                  <a href="#" class="ag-courses-item_link">
+                    <div class="ag-courses-item_bg"></div>
+                    <div class="ag-courses-item_title">
+                      Rank
+                    </div>
+                    <div class="ag-courses-item_date-box">
+                      Placement:
+                      <span class="ag-courses-item_date">
+                        {{ rank }}
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Inventory Section -->
+        <div class="inv">
+          <h2 class="events-title">Inventory</h2>
+          <div class="inv1">
+            {% for item in inventory %}
               <div class="ag-courses_item1">
                 <div class="ag-courses-item_link1">
                   <div class="ag-courses-item_title">{{ item.item }}</div>
-      
                 </div>
               </div>
             {% endfor %} 
           </div>     
-          </div>
-        </main>
+        </div>
       </div>
-    </div>
+    </main>
+  </div>
+</div>
+
+    
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-</html>
+    </html>
